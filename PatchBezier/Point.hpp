@@ -5,6 +5,8 @@
 #include <vector>
 extern float sizeCube;
 
+
+
 struct Point {
 	float x;
 	float y;
@@ -15,6 +17,7 @@ struct Point {
 	float c1=0.0f;
 	float c2 = 1.0f;
 	float c3 = 0.0f;
+
 	Point()
 	{
 		x = 0;
