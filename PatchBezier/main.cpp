@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Camera.hpp"
 #include "UtilEnums.hpp"
+#include "PatchCoons.hpp"
 #include "PatchesController.hpp"
 #include "Controller.hpp"
 #include "Colore.hpp"
@@ -82,6 +83,37 @@ bool Initialize2();
 
 bool initialized1 = false;
 bool initialized2 = false;
+
+std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
+{
+	std::vector<Curve> fourCurves;
+	for (unsigned i = 0; i < 4; ++i)
+	{
+		std::vector<Point> tmp;
+		for (unsigned j = i * controlPoints.size() / 4; j <= (i+1) * controlPoints.size() / 4 ; ++j)
+		{
+			if (j == controlPoints.size())
+			{
+				tmp.push_back(controlPoints[0]);
+			}
+			else
+			{
+				tmp.push_back(controlPoints[j]);
+			}
+
+		}
+
+		Curve tmpCurve(tmp,false);
+
+
+		tmpCurve.SubdiviseCurve();
+		fourCurves.push_back(tmpCurve);
+	}
+
+	return fourCurves;
+
+}
+
 
 void structToTabColor(std::vector<Point> newPoints, std::vector<Colore> c,float * tabP)
 {
@@ -297,15 +329,21 @@ bool Initialize1()
 	return true;
 }
 
+
+std::vector<Curve> testCurve;
 bool Initialize2()
 {
 	sumStatic = 0;
 	initialized2 = true;
 	//gridPoints3D = patches[0].gridPoints;
 	//tmpPoints = new float[gridPoints3D.size() * 9];
+
+
+	
+	testCurve = chaikinOnControlPoints(tmpPatch.controlPoints);
 	gridPoints3D.clear();
 	std::vector<int> cptGridPoints;
-	for (int i = 0; i < patches.size(); i++)
+	/*for (int i = 0; i < patches.size(); i++)
 	{
 		for (int j = 0; j < patches[i].gridPoints.size(); j++)
 		{
@@ -314,8 +352,15 @@ bool Initialize2()
 
 		cptGridPoints.push_back(sqrt(patches[i].gridPoints.size()) - 1);
 		sumStatic += (sqrt(patches[i].gridPoints.size()) - 1)*(sqrt(patches[i].gridPoints.size()) - 1) * 4;
-	}
+	}*/
 
+	for (int i = 0; i < testCurve.size(); ++i)
+	{
+		for (int j = 0; j < testCurve[i].newPoints.size(); j++)
+		{
+			gridPoints3D.push_back(testCurve[i].newPoints[j]);
+		}
+	}
 
 	tmpPoints = new float[gridPoints3D.size() * 9];
 
@@ -325,8 +370,13 @@ bool Initialize2()
 	g_BasicShader.CreateProgram();
 	
 
-	indTmp = createIndForGridPoints(cptGridPoints);
+	//indTmp = createIndForGridPoints(cptGridPoints);
+	indTmp = createInd(gridPoints3D.size());
+	for (int i = 0; i < gridPoints3D.size(); ++i)
+	{
+		std::cerr<<"TEST" << indTmp[i]<<std::endl;
 
+	}
 	structToTabColor(gridPoints3D, col,tmpPoints);
 
 	// Points controles VBO0
@@ -358,7 +408,7 @@ bool Initialize2()
 
 	glGenBuffers(1, &IBO1);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sumStatic * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, gridPoints3D.size() * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
 
 	// le fait de specifier 0 comme BO desactive l'usage des BOs
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -396,21 +446,19 @@ void update()
 		std::vector<int> cptGridPoints;
 
 		gridPoints3D.clear();
-		for (int i = 0; i < patches.size(); i++)
+		for (int i = 0; i < testCurve.size(); ++i)
 		{
-			for (int j = 0; j < patches[i].gridPoints.size(); j++)
+			for (int j = 0; j < testCurve[i].newPoints.size(); j++)
 			{
-				gridPoints3D.push_back(patches[i].gridPoints[j]);
+				gridPoints3D.push_back(testCurve[i].newPoints[j]);
 			}
-			cptGridPoints.push_back(sqrt(patches[i].gridPoints.size()) - 1);
-			sumStatic += (sqrt(patches[i].gridPoints.size()) - 1)*(sqrt(patches[i].gridPoints.size()) - 1)*4;
 		}
 		
 		delete(tmpPoints);
 		tmpPoints = new float[gridPoints3D.size()*9];
 
 
-		indTmp = createIndForGridPoints(cptGridPoints);
+		indTmp = createInd(gridPoints3D.size());
 
 		structToTabColor(gridPoints3D, col,tmpPoints);
 
@@ -418,7 +466,7 @@ void update()
 		glBufferSubData(GL_ARRAY_BUFFER, 0, gridPoints3D.size() * 9 * sizeof(float), tmpPoints);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO0);
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sumStatic * sizeof(GLushort), indTmp);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, gridPoints3D.size() * sizeof(GLushort), indTmp);
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -536,7 +584,7 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		glDrawElements(GL_QUADS, sumStatic, GL_UNSIGNED_SHORT, nullptr);
+		glDrawElements(GL_LINE_STRIP, gridPoints3D.size(), GL_UNSIGNED_SHORT, nullptr);
 
 		//----------------
 		glDisableVertexAttribArray(position_location);
