@@ -146,18 +146,53 @@ public:
 struct Face 
 {
 public:
-	std::vector<Edge*> edges;
+	std::vector<Edge> edges;
 	PointKob* barycentre;
-
-	Face(Edge* e1, Edge* e2, Edge* e3)
-	{
-		edges.push_back(e1);
-		edges.push_back(e2);
-		edges.push_back(e3);
-	}
-
 };
 
+
+#define X .525731112119133606
+#define Z .850650808352039932
+
+GLfloat sommets[12][3] =
+{
+	{ -X, 0, Z },
+	{ X, 0, Z },
+	{ -X, 0, -Z },
+	{ X, 0, -Z },
+	{ 0, Z, X },
+	{ 0, Z, -X },
+	{ 0, -Z, X },
+	{ 0, -Z, -X },
+	{ Z, X, 0 },
+	{ -Z, X, 0 },
+	{ Z, -X, 0 },
+	{ -Z, -X, 0 }
+};
+
+int sindex[20][3] =
+{
+	{ 0, 4, 1 },
+	{ 0, 9, 4 },
+	{ 9, 5, 4 },
+	{ 4, 5, 8 },
+	{ 4, 8, 1 },
+	{ 8, 10, 1 },
+	{ 8, 3, 10 },
+	{ 5, 3, 8 },
+	{ 5, 2, 3 },
+	{ 2, 7, 3 },
+	{ 7, 10, 3 },
+	{ 7, 6, 10 },
+	{ 7, 11, 6 },
+	{ 11, 0, 6 },
+	{ 0, 1, 6 },
+	{ 6, 1, 10 },
+	{ 9, 0, 11 },
+	{ 9, 11, 2 },
+	{ 9, 2, 5 },
+	{ 7, 2, 11 },
+};
 
 std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
 {
@@ -191,14 +226,14 @@ std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
 	return pertubatedPoints;
 }
 
-void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*>& points)
+void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*> points)
 {
 	// Calcul barycentre de chaque face
 	for (auto it = faces.begin(); it != faces.end(); ++it)
 	{
-		PointKob* p1 = (*it)->edges[0]->points[0];
-		PointKob* p2 = (*it)->edges[0]->points[1];
-		PointKob* p3 = (*it)->edges[1]->points[1];
+		PointKob* p1 = (*it)->edges[0].points[0];
+		PointKob* p2 = (*it)->edges[0].points[1];
+		PointKob* p3 = (*it)->edges[1].points[1];
 
 		PointKob barycentre;
 		
@@ -209,78 +244,36 @@ void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*>& points)
 		(*it)->barycentre = &barycentre;
 	}
 
-	//std::vector<Edge*> newEdges;
-	//std::vector<Face*> newFaces = faces;
+	std::vector<Edge*> newEdges;
 
 	// Relier chaque barycentre aux points qui composent sa face
-	//for (auto it = faces.begin(); it != faces.end(); ++it)
-	//{
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0]->points[0]));
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0]->points[1]));
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[1]->points[1]));
-	//}
+	for (auto it = faces.begin(); it != faces.end(); ++it)
+	{
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0].points[0]));
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0].points[1]));
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[1].points[1]));
+	}
 
 	// Flipping
 	std::vector<PointKob*> perturbatedPoints = letsPertubate(points);
 
 	for (int i = 0; i < faces.size(); ++i)
 	{
-		if (faces[i]->barycentre == NULL)
-		{
-			break;
-		}
-
 		for (int j = 0; j < faces[i]->edges.size(); ++j)
 		{
-			if (faces[i]->edges[j]->adjacentFace.size() > 1)
+			if (faces[i]->edges[j].adjacentFace.size() > 1)
 			{
-				if (faces[i]->edges[j]->adjacentFace[0] != faces[i])
+				if (faces[i]->edges[j].adjacentFace[0] != faces[i])
 				{
-					//newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre));
-
-
-					// TODO : Update all !!
-					// Update Edge
-					Edge* edge1 = new Edge(faces[i]->edges[j]->points[0], faces[i]->barycentre);
-					Edge* edge2 = new Edge(faces[i]->edges[j]->points[0], faces[i]->edges[j]->adjacentFace[0]->barycentre);
-					Edge* edge3 = new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre);
-
-					//edge1->adjacentFace.push
-
-
-					// Update Face
-					Face* newFace1 = new Face(edge1, edge2, edge3);
-
-					Face* newFace2 = new Face(new Edge(faces[i]->edges[j]->points[1], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[1], faces[i]->edges[j]->adjacentFace[0]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre));
-
-					faces.push_back(newFace1);
-					faces.push_back(newFace2);
+					newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j].adjacentFace[0]->barycentre));
 				}
 				else
 				{
-					//newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
-
-					// Update
-					Face* newFace1 = new Face(new Edge(faces[i]->edges[j]->points[0], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[0], faces[i]->edges[j]->adjacentFace[1]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
-
-					Face* newFace2 = new Face(new Edge(faces[i]->edges[j]->points[1], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[1], faces[i]->edges[j]->adjacentFace[1]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
-
-					faces.push_back(newFace1);
-					faces.push_back(newFace2);
+					newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j].adjacentFace[1]->barycentre));
 				}
 			}
 		}
-
-		faces.erase(faces.begin() + i);
 	}
-
-	points = perturbatedPoints;
 }
 
 std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
@@ -847,10 +840,10 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-
-		if(initialized2)
+		if (initialized2)
+		{
 			glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4, GL_UNSIGNED_SHORT, nullptr);
-
+		}
 		//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
 		//----------------
 		glDisableVertexAttribArray(position_location);
@@ -870,6 +863,8 @@ void animate()
 
 int main(int argc, const char* argv[])
 {
+
+
 	// passe les parametres de la ligne de commande a glut
 	glutInit(&argc, (char**)argv);
 	// defini deux color buffers (un visible, un cache) RGBA
