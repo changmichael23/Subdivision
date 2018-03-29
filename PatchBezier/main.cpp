@@ -535,6 +535,12 @@ bool Initialize2()
 	testCurve = chaikinOnControlPoints(tmpPatch.controlPoints);
 	gridPoints3D.clear();
 	std::vector<int> cptGridPoints;
+
+	PatchCoons tmpCoons(testCurve[0].n, testCurve[1].n, &testCurve[0], &testCurve[1], &testCurve[2], &testCurve[3]);
+
+	tmpCoons.GeneratePatch();
+
+
 	/*for (int i = 0; i < patches.size(); i++)
 	{
 		for (int j = 0; j < patches[i].gridPoints.size(); j++)
@@ -546,9 +552,7 @@ bool Initialize2()
 		sumStatic += (sqrt(patches[i].gridPoints.size()) - 1)*(sqrt(patches[i].gridPoints.size()) - 1) * 4;
 	}*/
 
-	PatchCoons tmpCoons(testCurve[0].n, testCurve[1].n, &testCurve[0], &testCurve[1], &testCurve[2], &testCurve[3]);
-
-	tmpCoons.GeneratePatch();
+	
 
 	/*for (int i = 0; i < testCurve.size(); ++i)
 	{
@@ -573,7 +577,8 @@ bool Initialize2()
 	
 
 	//indTmp = createIndForGridPoints(cptGridPoints);
-	indTmp = createInd(gridPoints3D.size());
+	//indTmp = createInd(gridPoints3D.size());
+	indTmp = createIndForGridPoints();
 	for (int i = 0; i < gridPoints3D.size(); ++i)
 	{
 		std::cerr<<"TEST" << indTmp[i]<<std::endl;
@@ -610,7 +615,7 @@ bool Initialize2()
 
 	glGenBuffers(1, &IBO1);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, gridPoints3D.size() * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4 * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
 
 	// le fait de specifier 0 comme BO desactive l'usage des BOs
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -660,16 +665,22 @@ void update()
 		}
 		}*/
 
+		
+
+
+
 		for (int i = 0; i < tmpCoons.points.size(); ++i)
 		{
 			gridPoints3D.push_back(tmpCoons.points[i]);
 		}
+
+		indTmp = createIndForGridPoints();
 		
 		delete(tmpPoints);
 		tmpPoints = new float[gridPoints3D.size()*9];
 
 
-		indTmp = createInd(gridPoints3D.size());
+		//indTmp = createInd(gridPoints3D.size());
 
 		structToTabColor(gridPoints3D, col,tmpPoints);
 
@@ -677,7 +688,7 @@ void update()
 		glBufferSubData(GL_ARRAY_BUFFER, 0, gridPoints3D.size() * 9 * sizeof(float), tmpPoints);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO0);
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, gridPoints3D.size() * sizeof(GLushort), indTmp);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4 * sizeof(GLushort), indTmp);
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -795,7 +806,7 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		glDrawElements(GL_POINTS, gridPoints3D.size(), GL_UNSIGNED_SHORT, nullptr);
+		glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4, GL_UNSIGNED_SHORT, nullptr);
 
 		//----------------
 		glDisableVertexAttribArray(position_location);
@@ -872,29 +883,57 @@ GLushort* createInd(int n)
 	return tmp;
 }
 
+//GLushort* createIndForGridPoints()
+//{
+//	// precision * precision
+//	int cpt = 0;
+//	GLushort* tmp = new GLushort[patches.size()*(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4];
+//	//int tmps = precision*precision * 4;
+//	int prec = (sqrt(gridPoints3D.size()) - 1);
+//	for (int l = 0; l < patches.size(); l++)
+//	{
+//		for (int i = 0; i < prec; i++)
+//		{
+//			int k = 0;
+//			for (int j = 0; j < prec; j++)
+//			{
+//				tmp[cpt] = l*(prec + 1)*(prec + 1)+i*(prec + 1) + j;
+//				tmp[cpt + 1] = l*(prec + 1)*(prec + 1) + i*(prec + 1) + j + 1;
+//				tmp[cpt + 2] = l*(prec + 1)*(prec + 1) + (i + 1)*(prec + 1) + j + 1;
+//				tmp[cpt + 3] = l*(prec + 1)*(prec + 1) + (i + 1)*(prec + 1) + j;
+//				cpt += 4;
+//			}
+//
+//		}
+//	}
+//	return tmp;
+//}
+
+
+
 GLushort* createIndForGridPoints()
 {
 	// precision * precision
 	int cpt = 0;
-	GLushort* tmp = new GLushort[patches.size()*(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4];
+	GLushort* tmp = new GLushort[(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4];
 	//int tmps = precision*precision * 4;
 	int prec = (sqrt(gridPoints3D.size()) - 1);
-	for (int l = 0; l < patches.size(); l++)
-	{
+
 		for (int i = 0; i < prec; i++)
 		{
 			int k = 0;
 			for (int j = 0; j < prec; j++)
 			{
-				tmp[cpt] = l*(prec + 1)*(prec + 1)+i*(prec + 1) + j;
-				tmp[cpt + 1] = l*(prec + 1)*(prec + 1) + i*(prec + 1) + j + 1;
-				tmp[cpt + 2] = l*(prec + 1)*(prec + 1) + (i + 1)*(prec + 1) + j + 1;
-				tmp[cpt + 3] = l*(prec + 1)*(prec + 1) + (i + 1)*(prec + 1) + j;
+
+				tmp[cpt] =  i*(prec + 1) + j;
+				tmp[cpt + 1] =  i*(prec + 1) + j + 1;
+				tmp[cpt + 2] =  (i + 1)*(prec + 1) + j + 1;
+				tmp[cpt + 3] =  (i + 1)*(prec + 1) + j;
 				cpt += 4;
 			}
 
 		}
-	}
+	
 	return tmp;
 }
 
