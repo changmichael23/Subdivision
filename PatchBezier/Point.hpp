@@ -65,6 +65,36 @@ struct Point {
 		return p;
 	}
 
+	Point operator/(const float &f)
+	{
+		Point p = Point();
+		p.x = x / f;
+		p.y = y / f;
+		p.z = z / f;
+
+		return p;
+	}
+
+	Point operator+(const Point &p)
+	{
+		Point result = Point();
+		result.x = this->x + p.x;
+		result.y = this->y + p.y;
+		result.z = this->z + p.z;
+
+		return p;
+	}
+
+	Point operator-(const Point &p)
+	{
+		Point result = Point();
+		result.x = this->x - p.x;
+		result.y = this->y - p.y;
+		result.z = this->z - p.z;
+
+		return p;
+	}
+
 	void operator=(const float &f)
 	{
 		x = f;
