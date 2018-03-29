@@ -354,13 +354,23 @@ bool Initialize2()
 		sumStatic += (sqrt(patches[i].gridPoints.size()) - 1)*(sqrt(patches[i].gridPoints.size()) - 1) * 4;
 	}*/
 
-	for (int i = 0; i < testCurve.size(); ++i)
+	PatchCoons tmpCoons(testCurve[0].n, testCurve[1].n, &testCurve[0], &testCurve[1], &testCurve[2], &testCurve[3]);
+
+	tmpCoons.GeneratePatch();
+
+	/*for (int i = 0; i < testCurve.size(); ++i)
 	{
 		for (int j = 0; j < testCurve[i].newPoints.size(); j++)
 		{
 			gridPoints3D.push_back(testCurve[i].newPoints[j]);
 		}
+	}*/
+
+	for (int i = 0; i < tmpCoons.points.size(); ++i)
+	{
+		gridPoints3D.push_back(tmpCoons.points[i]);
 	}
+	
 
 	tmpPoints = new float[gridPoints3D.size() * 9];
 
@@ -446,12 +456,21 @@ void update()
 		std::vector<int> cptGridPoints;
 
 		gridPoints3D.clear();
-		for (int i = 0; i < testCurve.size(); ++i)
+		PatchCoons tmpCoons(testCurve[0].n, testCurve[1].n, &testCurve[0], &testCurve[1], &testCurve[2], &testCurve[3]);
+
+		tmpCoons.GeneratePatch();
+
+		/*for (int i = 0; i < testCurve.size(); ++i)
 		{
-			for (int j = 0; j < testCurve[i].newPoints.size(); j++)
-			{
-				gridPoints3D.push_back(testCurve[i].newPoints[j]);
-			}
+		for (int j = 0; j < testCurve[i].newPoints.size(); j++)
+		{
+		gridPoints3D.push_back(testCurve[i].newPoints[j]);
+		}
+		}*/
+
+		for (int i = 0; i < tmpCoons.points.size(); ++i)
+		{
+			gridPoints3D.push_back(tmpCoons.points[i]);
 		}
 		
 		delete(tmpPoints);
@@ -584,7 +603,7 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		glDrawElements(GL_LINE_STRIP, gridPoints3D.size(), GL_UNSIGNED_SHORT, nullptr);
+		glDrawElements(GL_POINTS, gridPoints3D.size(), GL_UNSIGNED_SHORT, nullptr);
 
 		//----------------
 		glDisableVertexAttribArray(position_location);

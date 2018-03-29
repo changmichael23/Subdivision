@@ -2,16 +2,19 @@
   main.cpp
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\camera.hpp(22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\camera.hpp(23): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\point.hpp(85): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\point.hpp(122): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(14): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(39): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(62): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(68): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(80): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(90): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\point.hpp(115): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\point.hpp(152): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patchcoons.hpp(11): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patchcoons.hpp(15): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patchcoons.hpp(30): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patchcoons.hpp(43): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patchcoons.hpp(149): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(31): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(66): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\patch.hpp(82): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\common\mat4.h(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\common\mat4.h(65): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\common\mat4.h(75): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
@@ -23,15 +26,13 @@ c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): w
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(121): warning C4018: '<': signed/unsigned mismatch
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(152): warning C4018: '<': signed/unsigned mismatch
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(272): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(357): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(359): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(375): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(449): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(451): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(522): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(668): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(670): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(671): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(698): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(369): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(385): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(471): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(541): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(687): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(689): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(690): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(717): warning C4018: '<': signed/unsigned mismatch
   EnvInc3D.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Subdivision.exe
   EnvInc3D.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Subdivision.pdb (Full PDB)

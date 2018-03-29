@@ -9,14 +9,6 @@
 extern int precision;
 extern RotateMode rm;
 
-float COS(float angle)
-{
-	return cos(angle * 2 * 0.00872664625);
-}
-float SIN(float angle)
-{
-	return sin(angle * 2 * 0.00872664625);
-}
 
 struct Patch
 {
