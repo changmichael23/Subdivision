@@ -850,7 +850,6 @@ void animate()
 
 		if(initialized2)
 			glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4, GL_UNSIGNED_SHORT, nullptr);
-
 		//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
 		//----------------
 		glDisableVertexAttribArray(position_location);
