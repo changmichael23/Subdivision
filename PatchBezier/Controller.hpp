@@ -12,6 +12,7 @@ extern float rotateStep;
 extern float translateStep;
 extern float resizeStep;
 extern Patch tmp;
+extern int keyMode=0;
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -81,6 +82,26 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+	if (key == 'h')
+	{
+		keyMode = 0;
+	}
+	if (key == 'j')
+	{
+		keyMode = 1;
+
+	}
+	if (key == 'k')
+	{
+		keyMode = 2;
+
+	}
+	if (key == 'l')
+	{
+		keyMode = 3;
+
+	}
+
 }
 
 void mouse(int x, int y)

@@ -27,14 +27,16 @@ c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(152): warning C4018: '<': signed/unsigned mismatch
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(272): warning C4018: '<': signed/unsigned mismatch
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(373): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(390): warning C4018: '<': signed/unsigned mismatch
 c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(426): warning C4244: 'argument': conversion from 'double' to 'GLsizeiptr', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(480): warning C4018: '<': signed/unsigned mismatch
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(499): warning C4244: 'argument': conversion from 'double' to 'GLsizeiptr', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(552): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(617): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(726): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(728): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(756): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(481): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(491): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(501): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(511): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(533): warning C4244: 'argument': conversion from 'double' to 'GLsizeiptr', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(586): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(651): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(760): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(762): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\mathscoons\voronoi\subdivision\patchbezier\main.cpp(790): warning C4018: '<': signed/unsigned mismatch
   EnvInc3D.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Subdivision.exe
   EnvInc3D.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Subdivision.pdb (Full PDB)

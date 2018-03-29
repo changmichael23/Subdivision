@@ -579,7 +579,7 @@ bool Initialize2()
 	//indTmp = createIndForGridPoints(cptGridPoints);
 	//indTmp = createInd(gridPoints3D.size());
 	indTmp = createIndForGridPoints();
-	for (int i = 0; i < gridPoints3D.size(); ++i)
+	for (int i = 0; i < (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4; ++i)
 	{
 		std::cerr<<"TEST" << indTmp[i]<<std::endl;
 
@@ -667,13 +667,47 @@ void update()
 
 		
 
-
-
-		for (int i = 0; i < tmpCoons.points.size(); ++i)
+		if (keyMode == 0)
 		{
-			gridPoints3D.push_back(tmpCoons.points[i]);
-		}
 
+			for (int i = 0; i < tmpCoons.points.size(); ++i)
+			{
+				gridPoints3D.push_back(tmpCoons.points[i]);
+			}
+		}
+		else
+		{
+			if (keyMode == 1)
+			{
+
+				for (int i = 0; i < tmpCoons.uPoints.size(); ++i)
+				{
+					gridPoints3D.push_back(tmpCoons.uPoints[i]);
+				}
+			}
+			else
+			{
+				if (keyMode == 2)
+				{
+
+					for (int i = 0; i < tmpCoons.vPoints.size(); ++i)
+					{
+						gridPoints3D.push_back(tmpCoons.vPoints[i]);
+					}
+				}
+				else
+				{
+					if (keyMode == 3)
+					{
+
+						for (int i = 0; i < tmpCoons.vPoints.size(); ++i)
+						{
+							gridPoints3D.push_back(tmpCoons.bPoints[i]);
+						}
+					}
+				}
+			}
+		}
 		indTmp = createIndForGridPoints();
 		
 		delete(tmpPoints);
@@ -687,7 +721,7 @@ void update()
 		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, gridPoints3D.size() * 9 * sizeof(float), tmpPoints);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4 * sizeof(GLushort), indTmp);
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -806,8 +840,8 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4, GL_UNSIGNED_SHORT, nullptr);
-
+		glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4, GL_UNSIGNED_SHORT, nullptr);
+		//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
 		//----------------
 		glDisableVertexAttribArray(position_location);
 		glDisableVertexAttribArray(normal_location);
