@@ -21,7 +21,7 @@ void StartNewPatch()
 	std::cin >> m;
 
 	tmpPatch = Patch(n, m);
-	nbPoints = (n + 1) * (m + 1);
+	nbPoints = ((n - 1) + (m - 1))*2;
 	pointIdx = 0;
 	
 }
@@ -42,7 +42,7 @@ void ConfirmPatch()
 {
 	gs = idle;
 	patches.push_back(tmpPatch);
-	patches.back().GenerateCurve();
+	//patches.back().GenerateCurve();
 	++nbPatches;
 }
 

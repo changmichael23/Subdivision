@@ -29,7 +29,7 @@ struct Curve
 	{
 		Point p1, p2, np1, np2;
 
-		for (int i = 0; i < n - 1; ++i)
+		for (int i = 0; i < n - 1 ; ++i)
 		{
 			if (i == 0)
 			{
@@ -38,10 +38,15 @@ struct Curve
 
 				if (closed)
 				{
-					np1 = Point(((1 - u) * p1.x + u * p2.x) / 2, ((1 - u) * p1.y + u * p2.y) / 2, ((1 - u) * p1.z + u * p2.z) / 2);
+					np1 = Point(((1 - u) * p1.x + u * p2.x)  , ((1 - u) * p1.y + u * p2.y)  , ((1 - u) * p1.z + u * p2.z)  );
 					newPoints.push_back(np1);
 				}
-				np2 = Point((v * p1.x + (1 - v) * p2.x) / 2, (v * p1.y + (1 - v) * p2.y) / 2, (v * p1.z + (1 - v) * p2.z) / 2);
+				else
+				{
+					newPoints.push_back(currPoints[0]);
+				}
+
+				np2 = Point((v * p1.x + (1 - v) * p2.x)  , (v * p1.y + (1 - v) * p2.y)  , (v * p1.z + (1 - v) * p2.z)  );
 				newPoints.push_back(np2);
 			}
 			else if (i == n - 2)
@@ -49,27 +54,42 @@ struct Curve
 				p1 = currPoints.at(i);
 				p2 = currPoints.at(i + 1);
 
-				np1 = Point(((1 - u) * p1.x + u * p2.x) / 2, ((1 - u) * p1.y + u * p2.y) / 2, ((1 - u) * p1.z + u * p2.z) / 2);
+				np1 = Point(((1 - u) * p1.x + u * p2.x)  , ((1 - u) * p1.y + u * p2.y)  , ((1 - u) * p1.z + u * p2.z)  );
 				newPoints.push_back(np1);
 
 				if (closed)
 				{
-					np2 = Point((v * p1.x + (1 - v) * p2.x) / 2, (v * p1.y + (1 - v) * p2.y) / 2, (v * p1.z + (1 - v) * p2.z) / 2);
+					np2 = Point((v * p1.x + (1 - v) * p2.x)  , (v * p1.y + (1 - v) * p2.y)  , (v * p1.z + (1 - v) * p2.z)  );
 					newPoints.push_back(np2);
 				}
+				else
+				{
+					newPoints.push_back(currPoints.back());
+				}
 			}
-
-			if (closed)
+			else
 			{
-				p1 = currPoints.at(n - 1);
-				p2 = currPoints.at(0);
+				p1 = currPoints.at(i);
+				p2 = currPoints.at(i + 1);
 
-				np1 = Point(((1 - u) * p1.x + u * p2.x) / 2, ((1 - u) * p1.y + u * p2.y) / 2, ((1 - u) * p1.z + u * p2.z) / 2);
+				np1 = Point(((1 - u) * p1.x + u * p2.x)  , ((1 - u) * p1.y + u * p2.y)  , ((1 - u) * p1.z + u * p2.z)  );
 				newPoints.push_back(np1);
-
-				np2 = Point((v * p1.x + (1 - v) * p2.x) / 2, (v * p1.y + (1 - v) * p2.y) / 2, (v * p1.z + (1 - v) * p2.z) / 2);
+				np2 = Point((v * p1.x + (1 - v) * p2.x)  , (v * p1.y + (1 - v) * p2.y)  , (v * p1.z + (1 - v) * p2.z)  );
 				newPoints.push_back(np2);
 			}
+			
+		}
+
+		if (closed)
+		{
+			p1 = currPoints.at(n - 1);
+			p2 = currPoints.at(0);
+
+			np1 = Point(((1 - u) * p1.x + u * p2.x)  , ((1 - u) * p1.y + u * p2.y)  , ((1 - u) * p1.z + u * p2.z)  );
+			newPoints.push_back(np1);
+
+			np2 = Point((v * p1.x + (1 - v) * p2.x)  , (v * p1.y + (1 - v) * p2.y)  , (v * p1.z + (1 - v) * p2.z)  );
+			newPoints.push_back(np2);
 		}
 
 		currPoints = newPoints;
