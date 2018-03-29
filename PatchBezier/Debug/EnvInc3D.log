@@ -1,0 +1,36 @@
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (EnvInc3D.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  main.cpp
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\camera.hpp(22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\camera.hpp(23): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\point.hpp(85): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\point.hpp(122): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\patch.hpp(14): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\patch.hpp(18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\patch.hpp(39): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\patch.hpp(54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\patch.hpp(61): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(65): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(75): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(85): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(86): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(112): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
+  c:\users\user\documents\github\beziersurface\patchbezier\common\mat4.h(12): note: see previous definition of 'M_PI'
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(89): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(120): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(240): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(308): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(310): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(315): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(316): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(399): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(401): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(405): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(406): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(474): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(620): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(622): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(623): warning C4018: '<': signed/unsigned mismatch
+c:\users\user\documents\github\beziersurface\patchbezier\patchbezier\main.cpp(650): warning C4018: '<': signed/unsigned mismatch
+  EnvInc3D.vcxproj -> C:\Users\User\Documents\GitHub\BezierSurface\PatchBezier\PatchBezier\Debug\PatchBezier.exe
