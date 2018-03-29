@@ -1,5 +1,6 @@
 #include <math.h>
 #include <vector>
+#include <map>
 #include <iostream>
 #include "Camera.hpp"
 #include "UtilEnums.hpp"
@@ -83,6 +84,197 @@ bool Initialize2();
 
 bool initialized1 = false;
 bool initialized2 = false;
+
+
+struct Face;
+struct Edge;
+
+
+struct PointKob 
+{
+public :
+	float x;
+	float y;
+	float z;
+
+	std::vector<Edge*> adjacentEdge;
+	std::vector<Face*> adjacentFace;
+
+	PointKob() {};
+
+	PointKob(float x, float y, float z) 
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+
+	PointKob operator +(PointKob* p)
+	{
+		return PointKob(this->x + p->x, this->y + p->y, this->z + p->z);
+	}
+
+	PointKob operator /(int i)
+	{
+		return PointKob(this->x / i, this->y / i, this->z / i);;
+	}
+
+	PointKob operator /(float i)
+	{
+		return PointKob(this->x / i, this->y / i, this->z / i);;
+	}
+
+	PointKob operator *(float i)
+	{
+		return PointKob(this->x * i, this->y * i, this->z * i);
+	}
+};
+
+struct Edge 
+{
+public:
+	std::vector<PointKob*> points;
+	std::vector<Face*> adjacentFace;
+
+	Edge(PointKob* p1, PointKob* p2)
+	{
+		points.push_back(p1);
+		points.push_back(p2);
+	}
+};
+
+struct Face 
+{
+public:
+	std::vector<Edge> edges;
+	PointKob* barycentre;
+};
+
+
+#define X .525731112119133606
+#define Z .850650808352039932
+
+GLfloat sommets[12][3] =
+{
+	{ -X, 0, Z },
+	{ X, 0, Z },
+	{ -X, 0, -Z },
+	{ X, 0, -Z },
+	{ 0, Z, X },
+	{ 0, Z, -X },
+	{ 0, -Z, X },
+	{ 0, -Z, -X },
+	{ Z, X, 0 },
+	{ -Z, X, 0 },
+	{ Z, -X, 0 },
+	{ -Z, -X, 0 }
+};
+
+int sindex[20][3] =
+{
+	{ 0, 4, 1 },
+	{ 0, 9, 4 },
+	{ 9, 5, 4 },
+	{ 4, 5, 8 },
+	{ 4, 8, 1 },
+	{ 8, 10, 1 },
+	{ 8, 3, 10 },
+	{ 5, 3, 8 },
+	{ 5, 2, 3 },
+	{ 2, 7, 3 },
+	{ 7, 10, 3 },
+	{ 7, 6, 10 },
+	{ 7, 11, 6 },
+	{ 11, 0, 6 },
+	{ 0, 1, 6 },
+	{ 6, 1, 10 },
+	{ 9, 0, 11 },
+	{ 9, 11, 2 },
+	{ 9, 2, 5 },
+	{ 7, 2, 11 },
+};
+
+std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
+{
+	std::vector<PointKob*> pertubatedPoints;
+
+	for (auto it = points.begin(); it != points.end(); ++it)
+	{
+		float alpha = 1 / 9 * (4 - 2 * cos((2 * M_PI) / (*it)->adjacentEdge.size()));
+
+		PointKob sumAdj(0.f, 0.f, 0.f);
+		for (auto itAdj = (*it)->adjacentEdge.begin(); itAdj != (*it)->adjacentEdge.end(); itAdj++)
+		{
+			if ((*itAdj)->points[0] != (*it))
+			{
+				sumAdj = sumAdj + (*itAdj)->points[0];
+			}
+			else
+			{
+				sumAdj = sumAdj + (*itAdj)->points[1];
+			}
+		}
+
+		PointKob perturbatePoint;
+		perturbatePoint.x = (*(*it) * (1 - alpha)).x + sumAdj.x * (alpha / (float)((*it)->adjacentEdge.size()));
+		perturbatePoint.y = (*(*it) * (1 - alpha)).y + sumAdj.y * (alpha / (float)((*it)->adjacentEdge.size()));
+		perturbatePoint.z = (*(*it) * (1 - alpha)).z + sumAdj.z * (alpha / (float)((*it)->adjacentEdge.size()));
+
+		pertubatedPoints.push_back(&perturbatePoint);
+	}
+
+	return pertubatedPoints;
+}
+
+void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*> points)
+{
+	// Calcul barycentre de chaque face
+	for (auto it = faces.begin(); it != faces.end(); ++it)
+	{
+		PointKob* p1 = (*it)->edges[0].points[0];
+		PointKob* p2 = (*it)->edges[0].points[1];
+		PointKob* p3 = (*it)->edges[1].points[1];
+
+		PointKob barycentre;
+		
+		barycentre.x = ((p1->x + p2->x) + p3->x) / 3;
+		barycentre.y = ((p1->y + p2->y) + p3->y) / 3;
+		barycentre.z = ((p1->z + p2->z) + p3->z) / 3;
+
+		(*it)->barycentre = &barycentre;
+	}
+
+	std::vector<Edge*> newEdges;
+
+	// Relier chaque barycentre aux points qui composent sa face
+	for (auto it = faces.begin(); it != faces.end(); ++it)
+	{
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0].points[0]));
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0].points[1]));
+		newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[1].points[1]));
+	}
+
+	// Flipping
+	std::vector<PointKob*> perturbatedPoints = letsPertubate(points);
+
+	for (int i = 0; i < faces.size(); ++i)
+	{
+		for (int j = 0; j < faces[i]->edges.size(); ++j)
+		{
+			if (faces[i]->edges[j].adjacentFace.size() > 1)
+			{
+				if (faces[i]->edges[j].adjacentFace[0] != faces[i])
+				{
+					newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j].adjacentFace[0]->barycentre));
+				}
+				else
+				{
+					newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j].adjacentFace[1]->barycentre));
+				}
+			}
+		}
+	}
+}
 
 std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
 {
