@@ -21,6 +21,7 @@ struct PatchCoons
 
 	Curve* curves[4];
 	std::vector<Point> points;
+	std::vector<Point> uPoints, vPoints, bPoints;
 	
 	PatchCoons()
 	{
@@ -123,17 +124,20 @@ struct PatchCoons
 	{
 		points.clear();
 
-		std::vector<Point> uPoints = GenerateRuledSurface(curves[0], curves[2], m);
-		std::vector<Point> vPoints = GenerateRuledSurface(curves[1], curves[3], n);
+		uPoints = GenerateRuledSurface(curves[0], curves[2], m);
+		vPoints = GenerateRuledSurface(curves[1], curves[3], n);
 
-		std::vector<Point> bPoints = GenerateBilinearPatch();
+		bPoints = GenerateBilinearPatch();
 
 		for (int j = 0; j < m; ++j)
 		{
 			for (int i = 0; i < n; ++i)
 			{
-				Point p = uPoints.at(j * m + i) + vPoints.at((j + 1) * n - (i + 1)) - bPoints.at(j * n + i);
-				points.push_back(p);
+				float x = uPoints.at(j * m + i).x + vPoints.at((j + 1) * n - (i + 1)).x - bPoints.at(j * n + i).x;
+				float y = uPoints.at(j * m + i).y + vPoints.at((j + 1) * n - (i + 1)).y - bPoints.at(j * n + i).y;
+				float z = uPoints.at(j * m + i).z + vPoints.at((j + 1) * n - (i + 1)).z - bPoints.at(j * n + i).z;
+				//Point p = uPoints.at(j * m + i) + vPoints.at((j + 1) * n - (i + 1)) - bPoints.at(j * n + i);
+				points.push_back(Point(x, y, z));
 			}
 		}
 	}
@@ -146,7 +150,9 @@ struct PatchCoons
 		{
 			for (int j = 0; j < v; ++j)
 			{
-				surface.push_back(c1->currPoints[i] * (1 - j / ((float)(v - 1))) + c2->currPoints[c1->n - 1 - i] * j / ((float) (v - 1)));
+				Point p1 = c1->currPoints[i] * (1 - j / ((float)(v - 1)));
+				Point p2 = c2->currPoints[c1->n - 1 - i] * j / ((float)(v - 1));
+				surface.push_back(Point(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z));
 			}
 		}
 
