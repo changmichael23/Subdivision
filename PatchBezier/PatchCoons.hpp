@@ -133,9 +133,9 @@ struct PatchCoons
 		{
 			for (int i = 0; i < n; ++i)
 			{
-				float x = uPoints.at(j * m + i).x + vPoints.at((j + 1) * n - (i + 1)).x - bPoints.at(j * n + i).x;
-				float y = uPoints.at(j * m + i).y + vPoints.at((j + 1) * n - (i + 1)).y - bPoints.at(j * n + i).y;
-				float z = uPoints.at(j * m + i).z + vPoints.at((j + 1) * n - (i + 1)).z - bPoints.at(j * n + i).z;
+				float x = uPoints.at(j * m + i).x + vPoints.at((i + 1) * n - (j + 1)).x - bPoints.at(i * n + j).x;
+				float y = uPoints.at(j * m + i).y + vPoints.at((i + 1) * n - (j + 1)).y - bPoints.at(i * n + j).y;
+				float z = uPoints.at(j * m + i).z + vPoints.at((i + 1) * n - (j + 1)).z - bPoints.at(i * n + j).z;
 				//Point p = uPoints.at(j * m + i) + vPoints.at((j + 1) * n - (i + 1)) - bPoints.at(j * n + i);
 				points.push_back(Point(x, y, z));
 			}
