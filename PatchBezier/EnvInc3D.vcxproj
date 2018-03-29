@@ -163,6 +163,10 @@
     <ClCompile Include="SquareMatrice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Curve.hpp" />
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Edge.hpp" />
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Face.hpp" />
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Vertex.hpp" />
     <ClInclude Include="CQuaternion.h" />
     <ClInclude Include="CVecteur.h" />
     <ClInclude Include="Patch.hpp" />

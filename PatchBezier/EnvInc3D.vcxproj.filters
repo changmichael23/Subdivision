@@ -74,6 +74,18 @@
     <ClInclude Include="SquareMatrice.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Curve.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Edge.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Face.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Maths pour l%27info\Subdivision\Voronoi\Subdivision\PatchBezier\Vertex.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="basic.fs">
