@@ -173,6 +173,7 @@
     <ClInclude Include="SquareMatrice.h" />
     <ClInclude Include="UtilEnums.hpp" />
     <ClInclude Include="PatchesController.hpp" />
+	<ClInclude Include="PatchesCoons.hpp" />
     <ClInclude Include="..\Common\EsgiShader.h" />
     <ClInclude Include="..\common\mat4.h" />
     <ClInclude Include="Camera.hpp" />
