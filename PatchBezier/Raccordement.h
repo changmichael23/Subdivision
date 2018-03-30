@@ -44,6 +44,7 @@ PatchCoons* makeRacordement(PatchCoons patch1, int side1, PatchCoons patch2, int
 		}
 		else if (side2 == 1)
 		{
+			patchTmp2.curves[0] = patch2.curves[3]->copy();
 			patchTmp2.curves[1] = patch2.curves[0]->invCurve();
 			patchTmp2.curves[2] = patch2.curves[1]->copy();
 			patchTmp2.curves[3] = patch2.curves[2]->invCurve();
@@ -256,7 +257,7 @@ PatchCoons* makeRacordement(PatchCoons patch1, int side1, PatchCoons patch2, int
 			patchFinal->points.push_back(patch1.points[i]);
 		}
 
-		//pour l'instant on remet les courbes ï¿½ jour mais ï¿½ changer aprï¿½s
+		//pour l'instant on remet les courbes à jour mais à changer après
 		patchFinal->curves[0] = patch2.curves[0]->copy();
 		patchFinal->curves[1] = patch2.curves[1]->addConnectedCurve(patch1.curves[1]);
 		patchFinal->curves[2] = patch1.curves[2]->copy();
@@ -281,7 +282,7 @@ PatchCoons* makeRacordement(PatchCoons patch1, int side1, PatchCoons patch2, int
 			}
 		}
 
-		//pour l'instant on remet les courbes ï¿½ jour mais ï¿½ changer aprï¿½s
+		//pour l'instant on remet les courbes à jour mais à changer après
 		patchFinal->curves[0] = patch2.curves[0]->addConnectedCurve(patch1.curves[0]);
 		patchFinal->curves[1] = patch2.curves[1]->copy();
 		patchFinal->curves[2] = patch2.curves[2]->addConnectedCurve(patch1.curves[2]);
@@ -302,7 +303,7 @@ PatchCoons* makeRacordement(PatchCoons patch1, int side1, PatchCoons patch2, int
 			patchFinal->points.push_back(patch2.points[i]);
 		}
 
-		//pour l'instant on remet les courbes ï¿½ jour mais ï¿½ changer aprï¿½s
+		//pour l'instant on remet les courbes à jour mais à changer après
 		patchFinal->curves[0] = patch1.curves[0]->copy();
 		patchFinal->curves[1] = patch1.curves[1]->addConnectedCurve(patch2.curves[1]);
 		patchFinal->curves[2] = patch2.curves[2]->copy();
@@ -327,7 +328,7 @@ PatchCoons* makeRacordement(PatchCoons patch1, int side1, PatchCoons patch2, int
 			}
 		}
 
-		//pour l'instant on remet les courbes ï¿½ jour mais ï¿½ changer aprï¿½s
+		//pour l'instant on remet les courbes à jour mais à changer après
 		patchFinal->curves[0] = patch1.curves[0]->addConnectedCurve(patch2.curves[0]);
 		patchFinal->curves[1] = patch1.curves[1]->copy();
 		patchFinal->curves[2] = patch1.curves[2]->addConnectedCurve(patch2.curves[2]);
