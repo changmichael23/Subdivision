@@ -315,12 +315,12 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTria
 				vertexes[indexTriangle[i].y]->adjacentEdge.push_back(&edgeTmp);
 
 				edgeTmp.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp);
+				tmpFace->edges.push_back(&edgeTmp);
 			}
 			else
 			{
 				edges[findEdge(edgeTmp, edges)].adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp, edges)]);
+				tmpFace->edges.push_back(&edges[findEdge(edgeTmp, edges)]);
 
 			}
 			Edge edgeTmp1(vertexes[indexTriangle[i].y], vertexes[indexTriangle[i].z]);
@@ -332,12 +332,12 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTria
 				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp1);
 
 				edgeTmp1.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp1);
+				tmpFace->edges.push_back(&edgeTmp1);
 			}
 			else
 			{
 				edges[findEdge(edgeTmp1, edges)].adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp1, edges)]);
+				tmpFace->edges.push_back(&edges[findEdge(edgeTmp1, edges)]);
 
 			}
 
@@ -350,16 +350,13 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTria
 				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp2);
 
 				edgeTmp2.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp2);
+				tmpFace->edges.push_back(&edgeTmp2);
 			}
 			else
 			{
 				edges[findEdge(edgeTmp2, edges)].adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
-
+				tmpFace->edges.push_back(&edges[findEdge(edgeTmp2, edges)]);
 			}
-		
-
 	}
 
 
