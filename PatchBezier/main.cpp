@@ -227,7 +227,7 @@ int findEdge(Edge* tmpEdge, std::vector<Edge*> listEdge)
 }
 
 
-void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriangle,std::vector<PointKob*> vertexes, std::vector<Edge*> edges, std::vector<Face*> faces)
+void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriangle,std::vector<PointKob*>& vertexes, std::vector<Edge*>& edges, std::vector<Face*> &faces)
 {
 
 	for (unsigned i = 0; i < pointsCube.size(); ++i)
