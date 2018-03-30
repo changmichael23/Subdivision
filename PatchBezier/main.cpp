@@ -302,6 +302,9 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriang
 				tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
 			}
 
+			vertexes[faceDescript[i].x]->adjacentFace.push_back(tmpFace);
+			vertexes[faceDescript[i].y]->adjacentFace.push_back(tmpFace);
+			vertexes[faceDescript[i].z]->adjacentFace.push_back(tmpFace);
 			faces.push_back(tmpFace);
 	}
 
