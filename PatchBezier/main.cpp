@@ -91,6 +91,54 @@ struct Face;
 struct Edge;
 
 std::vector<int> indVector;
+#define X .52573111f
+#define Z .85065080f
+
+
+
+std::vector<int> sindex =
+{
+	 0, 4, 1 
+	, 0, 9, 4,
+	 9, 5, 4 ,
+	 4, 5, 8 ,
+	 4, 8, 1 ,
+	 8, 10, 1 ,
+	8, 3, 10 ,
+ 5, 3, 8 ,
+ 5, 2, 3 ,
+	 2, 7, 3 ,
+	 7, 10, 3 ,
+	 7, 6, 10 ,
+	 7, 11, 6 ,
+	 11, 0, 6 ,
+	 0, 1, 6 ,
+	 6, 1, 10 ,
+	 9, 0, 11 ,
+	 9, 11, 2 ,
+	 9, 2, 5 ,
+	 7, 2, 11 
+};
+
+
+void initializeIcosaedre()
+{
+	gridPoints3D.clear();
+
+	gridPoints3D.push_back(Point{ -X, 0, Z });
+	gridPoints3D.push_back(Point{ X, 0, Z });
+	gridPoints3D.push_back(Point{ -X, 0, -Z });
+	gridPoints3D.push_back(Point{ X, 0, -Z });
+	gridPoints3D.push_back(Point{ 0, Z, X });
+	gridPoints3D.push_back(Point{ 0, Z, -X });
+	gridPoints3D.push_back(Point{ 0, -Z, X });
+	gridPoints3D.push_back(Point{ 0, -Z, -X });
+	gridPoints3D.push_back(Point{ Z, X, 0 });
+	gridPoints3D.push_back(Point{ -Z, X, 0 });
+	gridPoints3D.push_back(Point{ Z, -X, 0 });
+	gridPoints3D.push_back(Point{ -Z, -X, 0 });
+}
+
 struct PointKob 
 {
 public :
@@ -156,16 +204,19 @@ public:
 		edges.push_back(e2);
 		edges.push_back(e3);
 	}
+	Face()
+	{
+	}
 
 };
 
 
-int findEdge(Edge tmpEdge, std::vector<Edge*> listEdge)
+int findEdge(Edge* tmpEdge, std::vector<Edge*> listEdge)
 {
 	for (int i = 0; i < listEdge.size(); ++i)
 	{
-		if (((tmpEdge.points[0] == listEdge[i]->points[0]) && (tmpEdge.points[1] == listEdge[i]->points[1]))
-			|| ((tmpEdge.points[1] == listEdge[i]->points[0]) && (tmpEdge.points[0] == listEdge[i]->points[1])))
+		if (((tmpEdge->points[0] == listEdge[i]->points[0]) && (tmpEdge->points[1] == listEdge[i]->points[1]))
+			|| ((tmpEdge->points[1] == listEdge[i]->points[0]) && (tmpEdge->points[0] == listEdge[i]->points[1])))
 		{
 			return i;
 
@@ -176,29 +227,39 @@ int findEdge(Edge tmpEdge, std::vector<Edge*> listEdge)
 }
 
 
-void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTriangle,std::vector<PointKob*> vertexes, std::vector<Edge*> edges, std::vector<Face*> faces)
+void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriangle,std::vector<PointKob*> vertexes, std::vector<Edge*> edges, std::vector<Face*> faces)
 {
 
 	for (unsigned i = 0; i < pointsCube.size(); ++i)
 	{
 		PointKob pTm(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z) ;
-		vertexes.push_back(&pTm);
+		//vertexes.push_back(&pTm);
+		vertexes.push_back(new PointKob(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z));
+	}
+	std::vector<Point> faceDescript;
+	for (unsigned i = 0; i < indexTriangle.size(); i+=3)
+	{
+
+		Point tmp(indexTriangle[i], indexTriangle[i+1], indexTriangle[i+2]);
+		faceDescript.push_back(tmp);
+
+
 
 	}
 
-	for (unsigned i = 0; i < indexTriangle.size(); ++i)
+	for (unsigned i = 0; i < faceDescript.size(); ++i)
 	{
-		Face *tmpFace;
-			Edge edgeTmp(vertexes[indexTriangle[i].x], vertexes[indexTriangle[i].y]);
+		Face *tmpFace = new Face();
+			Edge* edgeTmp= new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].y]);
 
 			if (findEdge(edgeTmp,edges) == -1)
 			{
-				edges.push_back(&edgeTmp);
-				vertexes[indexTriangle[i].x]->adjacentEdge.push_back(&edgeTmp);
-				vertexes[indexTriangle[i].y]->adjacentEdge.push_back(&edgeTmp);
+				edges.push_back(edgeTmp);
+				vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp);
+				vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp);
 
-				edgeTmp.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(&edgeTmp);
+				edgeTmp->adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp);
 			}
 			else
 			{
@@ -206,16 +267,16 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTria
 				tmpFace->edges.push_back(edges[findEdge(edgeTmp, edges)]);
 
 			}
-			Edge edgeTmp1(vertexes[indexTriangle[i].y], vertexes[indexTriangle[i].z]);
+			Edge *edgeTmp1= new Edge(vertexes[faceDescript[i].y], vertexes[faceDescript[i].z]);
 
 			if (findEdge(edgeTmp1, edges) == -1)
 			{
-				edges.push_back(&edgeTmp1);
-				vertexes[indexTriangle[i].y]->adjacentEdge.push_back(&edgeTmp1);
-				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp1);
+				edges.push_back(edgeTmp1);
+				vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp1);
+				vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp1);
 
-				edgeTmp1.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(&edgeTmp1);
+				edgeTmp1->adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp1);
 			}
 			else
 			{
@@ -224,22 +285,24 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTria
 
 			}
 
-			Edge edgeTmp2(vertexes[indexTriangle[i].x], vertexes[indexTriangle[i].z]);
+			Edge *edgeTmp2 = new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].z]);
 
 			if (findEdge(edgeTmp2, edges) == -1)
 			{
-				edges.push_back(&edgeTmp2);
-				vertexes[indexTriangle[i].x]->adjacentEdge.push_back(&edgeTmp2);
-				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp2);
+				edges.push_back(edgeTmp2);
+				vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp2);
+				vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp2);
 
-				edgeTmp2.adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(&edgeTmp2);
+				edgeTmp2->adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp2);
 			}
 			else
 			{
 				edges[findEdge(edgeTmp2, edges)]->adjacentFace.push_back(tmpFace);
 				tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
 			}
+
+			faces.push_back(tmpFace);
 	}
 
 
@@ -633,33 +696,20 @@ bool Initialize2()
 
 	tmpCoons.GeneratePatch();
 
-
-	/*for (int i = 0; i < patches.size(); i++)
-	{
-		for (int j = 0; j < patches[i].gridPoints.size(); j++)
-		{
-			gridPoints3D.push_back(patches[i].gridPoints[j]);
-		}
-
-		cptGridPoints.push_back(sqrt(patches[i].gridPoints.size()) - 1);
-		sumStatic += (sqrt(patches[i].gridPoints.size()) - 1)*(sqrt(patches[i].gridPoints.size()) - 1) * 4;
-	}*/
-
 	
 
-	/*for (int i = 0; i < testCurve.size(); ++i)
-	{
-		for (int j = 0; j < testCurve[i].newPoints.size(); j++)
-		{
-			gridPoints3D.push_back(testCurve[i].newPoints[j]);
-		}
-	}*/
-
-	for (int i = 0; i < tmpCoons.points.size(); ++i)
+	/*for (int i = 0; i < tmpCoons.points.size(); ++i)
 	{
 		gridPoints3D.push_back(tmpCoons.points[i]);
 	}
+	*/
 	
+	initializeIcosaedre();
+	std::vector<PointKob*> pkP;
+	std::vector<Edge*> edgesP;
+	std::vector<Face*> facesP;
+
+	initCleanStruct(gridPoints3D, sindex, pkP, edgesP, facesP);
 
 	tmpPoints = new float[gridPoints3D.size() * 9];
 
@@ -672,8 +722,17 @@ bool Initialize2()
 	//indTmp = createIndForGridPoints(cptGridPoints);
 	//indTmp = createInd(gridPoints3D.size());
 	//indTmp = createIndForGridPoints();
-	indTmp = createIndFromVector(tmpCoons.triangles);
-	indVector = tmpCoons.triangles;
+
+	//indTmp = createIndFromVector(tmpCoons.triangles);
+
+	
+	//indVector = tmpCoons.triangles;
+
+	
+	
+	indTmp = createIndFromVector(sindex);
+	indVector = sindex;
+
 	for (int i = 0; i < (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4; ++i)
 	{
 		std::cerr<<"TEST" << indTmp[i]<<std::endl;
