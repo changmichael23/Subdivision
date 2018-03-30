@@ -36,6 +36,7 @@ std::vector<Point> gridPoints3D;
 float* tabPoints, *tmpPoints;         //Tous les points en 3D
 GLushort* createInd(int);
 GLushort* createIndForGridPoints();
+GLushort* createIndFromVector(std::vector<int> indexesVector);
 GLushort* createIndForGridPoints(std::vector<int> tmpCptGP);
 GLushort* indi;			// Tab indice
 GLushort* indTmp;			// Tab indice
@@ -89,7 +90,7 @@ bool initialized2 = false;
 struct Face;
 struct Edge;
 
-
+std::vector<int> indVector;
 struct PointKob 
 {
 public :
@@ -670,7 +671,9 @@ bool Initialize2()
 
 	//indTmp = createIndForGridPoints(cptGridPoints);
 	//indTmp = createInd(gridPoints3D.size());
-	indTmp = createIndForGridPoints();
+	//indTmp = createIndForGridPoints();
+	indTmp = createIndFromVector(tmpCoons.triangles);
+	indVector = tmpCoons.triangles;
 	for (int i = 0; i < (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4; ++i)
 	{
 		std::cerr<<"TEST" << indTmp[i]<<std::endl;
@@ -707,7 +710,7 @@ bool Initialize2()
 
 	glGenBuffers(1, &IBO1);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4 * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indVector.size() * sizeof(GLushort), indTmp, GL_STATIC_DRAW);
 
 	// le fait de specifier 0 comme BO desactive l'usage des BOs
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -800,12 +803,12 @@ void update()
 				}
 			}
 		}
-		indTmp = createIndForGridPoints();
+		//indTmp = createIndForGridPoints();
 		
 		delete(tmpPoints);
 		tmpPoints = new float[gridPoints3D.size()*9];
-
-
+		indTmp = createIndFromVector(tmpCoons.triangles);
+		indVector = tmpCoons.triangles;
 		//indTmp = createInd(gridPoints3D.size());
 
 		structToTabColor(gridPoints3D, col,tmpPoints);
@@ -814,7 +817,7 @@ void update()
 		glBufferSubData(GL_ARRAY_BUFFER, 0, gridPoints3D.size() * 9 * sizeof(float), tmpPoints);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4 * sizeof(GLushort), indTmp);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indVector.size() * sizeof(GLushort), indTmp);
 	}
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -932,9 +935,10 @@ void animate()
 		glEnableVertexAttribArray(color_location);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-
-		if(initialized2)
-			glDrawElements(GL_QUADS, (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4, GL_UNSIGNED_SHORT, nullptr);
+		if (initialized2)
+		{
+			glDrawElements(GL_TRIANGLES, indVector.size(), GL_UNSIGNED_SHORT, nullptr);
+		}
 		//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
 		//----------------
 		glDisableVertexAttribArray(position_location);
@@ -1060,6 +1064,15 @@ GLushort* createIndForGridPoints()
 
 		}
 	
+	return tmp;
+}
+GLushort* createIndFromVector(std::vector<int> indexesVector)
+{
+	GLushort* tmp = new GLushort[indexesVector.size()];
+	for (int i = 0; i < indexesVector.size(); i++)
+	{
+		tmp[i] = indexesVector[i];
+	}
 	return tmp;
 }
 
