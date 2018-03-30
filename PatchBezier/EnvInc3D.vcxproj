@@ -166,6 +166,7 @@
     <ClInclude Include="Curve.hpp" />
     <ClInclude Include="Edge.hpp" />
     <ClInclude Include="Face.hpp" />
+    <ClInclude Include="Raccordement.h" />
     <ClInclude Include="Vertex.hpp" />
     <ClInclude Include="CQuaternion.h" />
     <ClInclude Include="CVecteur.h" />
@@ -173,7 +174,7 @@
     <ClInclude Include="SquareMatrice.h" />
     <ClInclude Include="UtilEnums.hpp" />
     <ClInclude Include="PatchesController.hpp" />
-	<ClInclude Include="PatchCoons.hpp" />
+    <ClInclude Include="PatchCoons.hpp" />
     <ClInclude Include="..\Common\EsgiShader.h" />
     <ClInclude Include="..\common\mat4.h" />
     <ClInclude Include="Camera.hpp" />
