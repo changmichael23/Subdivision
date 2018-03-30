@@ -25,6 +25,83 @@ struct Curve
 		closed = c;
 	}
 
+	Curve* invCurve()
+	{
+		Curve *c = new Curve();
+		c->u = u;
+		c->v = v;
+		c->n = n;
+		for (int i = initPoints.size() - 1; i >= 0; i--)
+		{
+			c->initPoints.push_back(initPoints[i]);
+		}
+		for (int i = currPoints.size() - 1; i >= 0; i--)
+		{
+			c->currPoints.push_back(currPoints[i]);
+		}
+		for (int i = newPoints.size() - 1; i >= 0; i--)
+		{
+			c->newPoints.push_back(newPoints[i]);
+		}
+		return c;
+	}
+
+	Curve* copy()
+	{
+		Curve *c = new Curve();
+		c->u = u;
+		c->v = v;
+		c->n = n;
+		for (int i = 0; i<initPoints.size(); i++)
+		{
+			c->initPoints.push_back(initPoints[i]);
+		}
+		for (int i = 0; i<currPoints.size(); i++)
+		{
+			c->currPoints.push_back(currPoints[i]);
+		}
+		for (int i = 0; i<newPoints.size(); i++)
+		{
+			c->newPoints.push_back(newPoints[i]);
+		}
+		return c;
+	}
+
+	Curve* addConnectedCurve(Curve *c2)
+	{
+		Curve *newCourbe = new Curve();
+		newCourbe->u = u;
+		newCourbe->v = v;
+		newCourbe->n = n+ c2->n -1;
+		for (int i = 0; i<initPoints.size()-1; i++)
+		{
+			newCourbe->initPoints.push_back(initPoints[i]);
+		}
+		for (int i = 0; i<c2->initPoints.size(); i++)
+		{
+			newCourbe->initPoints.push_back(c2->initPoints[i]);
+		}
+
+		for (int i = 0; i<currPoints.size() - 1; i++)
+		{
+			newCourbe->currPoints.push_back(currPoints[i]);
+		}
+		for (int i = 0; i<c2->currPoints.size(); i++)
+		{
+			newCourbe->currPoints.push_back(c2->currPoints[i]);
+		}
+
+		for (int i = 0; i<newPoints.size() - 1; i++)
+		{
+			newCourbe->newPoints.push_back(newPoints[i]);
+		}
+		for (int i = 0; i<c2->newPoints.size(); i++)
+		{
+			newCourbe->newPoints.push_back(c2->newPoints[i]);
+		}
+		return newCourbe;
+	}
+
 	void SubdiviseCurve()
 	{
 		Point p1, p2, np1, np2;
