@@ -277,6 +277,94 @@ bool edgeAlreadyExist(Edge* e1, std::vector<Edge*> vec)
 	return false;
 }
 
+int findEdge(Edge tmpEdge, std::vector<Edge> listEdge)
+{
+	for (int i = 0; i < listEdge.size(); ++i)
+	{
+		if (((tmpEdge.points[0] == listEdge[i].points[0]) && (tmpEdge.points[1] == listEdge[i].points[1]))
+			|| ((tmpEdge.points[1] == listEdge[i].points[0]) && (tmpEdge.points[0] == listEdge[i].points[1])))
+		{
+			return i;
+
+		}
+	}
+	return -1;
+
+}
+
+
+void initCleanStruct(std::vector<Point> pointsCube, std::vector<Point> indexTriangle,std::vector<PointKob*> vertexes, std::vector<Edge> edges, std::vector<Face*> faces)
+{
+
+	for (unsigned i = 0; i < pointsCube.size(); ++i)
+	{
+		PointKob pTm(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z) ;
+		vertexes.push_back(&pTm);
+
+	}
+
+	for (unsigned i = 0; i < indexTriangle.size(); ++i)
+	{
+		Face *tmpFace;
+			Edge edgeTmp(vertexes[indexTriangle[i].x], vertexes[indexTriangle[i].y]);
+
+			if (findEdge(edgeTmp, edges) == -1)
+			{
+				edges.push_back(edgeTmp);
+				vertexes[indexTriangle[i].x]->adjacentEdge.push_back(&edgeTmp);
+				vertexes[indexTriangle[i].y]->adjacentEdge.push_back(&edgeTmp);
+
+				edgeTmp.adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp);
+			}
+			else
+			{
+				edges[findEdge(edgeTmp, edges)].adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edges[findEdge(edgeTmp, edges)]);
+
+			}
+			Edge edgeTmp1(vertexes[indexTriangle[i].y], vertexes[indexTriangle[i].z]);
+
+			if (findEdge(edgeTmp1, edges) == -1)
+			{
+				edges.push_back(edgeTmp1);
+				vertexes[indexTriangle[i].y]->adjacentEdge.push_back(&edgeTmp1);
+				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp1);
+
+				edgeTmp1.adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp1);
+			}
+			else
+			{
+				edges[findEdge(edgeTmp1, edges)].adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edges[findEdge(edgeTmp1, edges)]);
+
+			}
+
+			Edge edgeTmp2(vertexes[indexTriangle[i].x], vertexes[indexTriangle[i].z]);
+
+			if (findEdge(edgeTmp2, edges) == -1)
+			{
+				edges.push_back(edgeTmp2);
+				vertexes[indexTriangle[i].x]->adjacentEdge.push_back(&edgeTmp2);
+				vertexes[indexTriangle[i].z]->adjacentEdge.push_back(&edgeTmp2);
+
+				edgeTmp2.adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edgeTmp2);
+			}
+			else
+			{
+				edges[findEdge(edgeTmp2, edges)].adjacentFace.push_back(tmpFace);
+				tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
+
+			}
+		
+
+	}
+
+
+}
+
 std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
 {
 	std::vector<PointKob*> pertubatedPoints;
