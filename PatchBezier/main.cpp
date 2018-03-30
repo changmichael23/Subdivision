@@ -1,7 +1,9 @@
 #include <math.h>
 #include <vector>
 #include <map>
+#include <set>
 #include <iostream>
+#include <functional>
 #include "Camera.hpp"
 #include "UtilEnums.hpp"
 #include "PatchCoons.hpp"
@@ -42,14 +44,14 @@ GLushort* indi;			// Tab indice
 GLushort* indTmp;			// Tab indice
 
 std::vector<Point> allGridPoints = std::vector<Point>();
-std::vector<Point> allControlPoints= std::vector<Point>();
+std::vector<Point> allControlPoints = std::vector<Point>();
 int cptCtrlPts = 0;
 int sumStatic = 0;
 
 GLuint VAO;
 GLuint VBO0;	// identifiant du Vertex Buffer Object 0
 GLuint VBO1;	// identifiant du Vertex Buffer Object 1
-GLuint IBO,IBO1;	// identifiant du Index Buffer Object
+GLuint IBO, IBO1;	// identifiant du Index Buffer Object
 GLuint TexObj; // identifiant du Texture Object
 
 float colore[4];
@@ -98,7 +100,7 @@ std::vector<int> indVector;
 
 std::vector<int> sindex =
 {
-	 0, 4, 1 
+	 0, 4, 1
 	, 0, 9, 4,
 	 9, 5, 4 ,
 	 4, 5, 8 ,
@@ -117,7 +119,7 @@ std::vector<int> sindex =
 	 9, 0, 11 ,
 	 9, 11, 2 ,
 	 9, 2, 5 ,
-	 7, 2, 11 
+	 7, 2, 11
 };
 
 
@@ -139,9 +141,9 @@ void initializeIcosaedre()
 	gridPoints3D.push_back(Point{ -Z, -X, 0 });
 }
 
-struct PointKob 
+struct PointKob
 {
-public :
+public:
 	float x;
 	float y;
 	float z;
@@ -151,7 +153,7 @@ public :
 
 	PointKob() {};
 
-	PointKob(float x, float y, float z) 
+	PointKob(float x, float y, float z)
 	{
 		this->x = x;
 		this->y = y;
@@ -179,7 +181,7 @@ public :
 	}
 };
 
-struct Edge 
+struct Edge
 {
 public:
 	std::vector<PointKob*> points;
@@ -192,7 +194,7 @@ public:
 	}
 };
 
-struct Face 
+struct Face
 {
 public:
 	std::vector<Edge*> edges;
@@ -210,6 +212,8 @@ public:
 
 };
 
+std::vector<PointKob*> perturbatedPoints;
+std::vector<Edge*> newEdges;
 
 int findEdge(Edge* tmpEdge, std::vector<Edge*> listEdge)
 {
@@ -227,20 +231,20 @@ int findEdge(Edge* tmpEdge, std::vector<Edge*> listEdge)
 }
 
 
-void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriangle,std::vector<PointKob*>& vertexes, std::vector<Edge*>& edges, std::vector<Face*> &faces)
+void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriangle, std::vector<PointKob*>& vertexes, std::vector<Edge*>& edges, std::vector<Face*> &faces)
 {
 
 	for (unsigned i = 0; i < pointsCube.size(); ++i)
 	{
-		PointKob pTm(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z) ;
+		PointKob pTm(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z);
 		//vertexes.push_back(&pTm);
 		vertexes.push_back(new PointKob(pointsCube[i].x, pointsCube[i].y, pointsCube[i].z));
 	}
 	std::vector<Point> faceDescript;
-	for (unsigned i = 0; i < indexTriangle.size(); i+=3)
+	for (unsigned i = 0; i < indexTriangle.size(); i += 3)
 	{
 
-		Point tmp(indexTriangle[i], indexTriangle[i+1], indexTriangle[i+2]);
+		Point tmp(indexTriangle[i], indexTriangle[i + 1], indexTriangle[i + 2]);
 		faceDescript.push_back(tmp);
 
 
@@ -250,65 +254,179 @@ void initCleanStruct(std::vector<Point> pointsCube, std::vector<int> indexTriang
 	for (unsigned i = 0; i < faceDescript.size(); ++i)
 	{
 		Face *tmpFace = new Face();
-			Edge* edgeTmp= new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].y]);
+		Edge* edgeTmp = new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].y]);
 
-			if (findEdge(edgeTmp,edges) == -1)
-			{
-				edges.push_back(edgeTmp);
-				vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp);
-				vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp);
+		if (findEdge(edgeTmp, edges) == -1)
+		{
+			edges.push_back(edgeTmp);
+			vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp);
+			vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp);
 
-				edgeTmp->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp);
-			}
-			else
-			{
-				edges[findEdge(edgeTmp, edges)]->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp, edges)]);
+			edgeTmp->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edgeTmp);
+		}
+		else
+		{
+			edges[findEdge(edgeTmp, edges)]->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edges[findEdge(edgeTmp, edges)]);
 
-			}
-			Edge *edgeTmp1= new Edge(vertexes[faceDescript[i].y], vertexes[faceDescript[i].z]);
+		}
+		Edge *edgeTmp1 = new Edge(vertexes[faceDescript[i].y], vertexes[faceDescript[i].z]);
 
-			if (findEdge(edgeTmp1, edges) == -1)
-			{
-				edges.push_back(edgeTmp1);
-				vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp1);
-				vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp1);
+		if (findEdge(edgeTmp1, edges) == -1)
+		{
+			edges.push_back(edgeTmp1);
+			vertexes[faceDescript[i].y]->adjacentEdge.push_back(edgeTmp1);
+			vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp1);
 
-				edgeTmp1->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp1);
-			}
-			else
-			{
-				edges[findEdge(edgeTmp1, edges)]->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp1, edges)]);
+			edgeTmp1->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edgeTmp1);
+		}
+		else
+		{
+			edges[findEdge(edgeTmp1, edges)]->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edges[findEdge(edgeTmp1, edges)]);
 
-			}
+		}
 
-			Edge *edgeTmp2 = new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].z]);
+		Edge *edgeTmp2 = new Edge(vertexes[faceDescript[i].x], vertexes[faceDescript[i].z]);
 
-			if (findEdge(edgeTmp2, edges) == -1)
-			{
-				edges.push_back(edgeTmp2);
-				vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp2);
-				vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp2);
+		if (findEdge(edgeTmp2, edges) == -1)
+		{
+			edges.push_back(edgeTmp2);
+			vertexes[faceDescript[i].x]->adjacentEdge.push_back(edgeTmp2);
+			vertexes[faceDescript[i].z]->adjacentEdge.push_back(edgeTmp2);
 
-				edgeTmp2->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edgeTmp2);
-			}
-			else
-			{
-				edges[findEdge(edgeTmp2, edges)]->adjacentFace.push_back(tmpFace);
-				tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
-			}
+			edgeTmp2->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edgeTmp2);
+		}
+		else
+		{
+			edges[findEdge(edgeTmp2, edges)]->adjacentFace.push_back(tmpFace);
+			tmpFace->edges.push_back(edges[findEdge(edgeTmp2, edges)]);
+		}
 
-			vertexes[faceDescript[i].x]->adjacentFace.push_back(tmpFace);
-			vertexes[faceDescript[i].y]->adjacentFace.push_back(tmpFace);
-			vertexes[faceDescript[i].z]->adjacentFace.push_back(tmpFace);
-			faces.push_back(tmpFace);
+		vertexes[faceDescript[i].x]->adjacentFace.push_back(tmpFace);
+		vertexes[faceDescript[i].y]->adjacentFace.push_back(tmpFace);
+		vertexes[faceDescript[i].z]->adjacentFace.push_back(tmpFace);
+		faces.push_back(tmpFace);
 	}
 
 
+}
+
+float OrientedAngle(Edge* e1, Edge* e2, PointKob* p1)
+{
+	PointKob* pk1;
+	PointKob* pk2;
+
+
+	if (e1->points[0] == p1)
+	{
+		pk1 = e1->points[1];
+	}
+	else
+	{
+		pk1 = e1->points[0];
+	}
+
+	if (e2->points[0] == p1)
+	{
+		pk2 = e2->points[1];
+	}
+	else
+	{
+		pk2 = e2->points[0];
+	}
+
+	float angle = atan2(pk2->z - p1->z, pk2->x - p1->x) - atan2(pk1->z - p1->z, pk1->x - p1->x);
+
+	if (angle < 0)
+		angle += 2 * M_PI;
+
+	return angle;
+}
+
+Edge* foundEdge(Edge* e1, Edge* e2)
+{
+	PointKob* p, *pk1 = nullptr, *pk2 = nullptr;
+
+	if (e1->points[0] == e2->points[0])
+	{
+		p = e1->points[0];
+		pk1 = e1->points[1];
+		pk2 = e2->points[1];
+	}
+	else if (e1->points[0] == e2->points[1])
+	{
+		p = e1->points[0];
+		pk1 = e1->points[1];
+		pk2 = e2->points[0];
+	}
+	else if (e1->points[1] == e2->points[0])
+	{
+		p = e1->points[1];
+		pk1 = e1->points[0];
+		pk2 = e2->points[1];
+	}
+	else if (e1->points[1] == e2->points[1])
+	{
+		p = e1->points[1];
+		pk1 = e1->points[0];
+		pk2 = e2->points[0];
+	}
+
+	for (int i = 0; i < newEdges.size(); ++i)
+	{
+		if ((pk1 == newEdges[i]->points[0] && pk2 == newEdges[i]->points[1]) ||
+			(pk1 == newEdges[i]->points[1] && pk2 == newEdges[i]->points[0]))
+		{
+			return newEdges[i];
+		}
+	}
+
+	return nullptr;
+}
+
+
+void findOrientedAdjacentEdges(PointKob* p)
+{
+	std::map<Edge*, float> oriented_angles;
+
+	Edge* aref = p->adjacentEdge.at(0);
+
+	for (int i = 1; i < p->adjacentEdge.size(); ++i)
+	{
+		oriented_angles.insert(std::pair<Edge*, float>(p->adjacentEdge.at(i), OrientedAngle(aref, p->adjacentEdge.at(i), p)));
+	}
+
+	typedef std::function<bool(std::pair<Edge*, float>, std::pair<Edge*, float>)> Comparator;
+
+	Comparator compFunctor = [](std::pair<Edge*, float> elem1, std::pair<Edge*, float> elem2)
+	{
+		return elem1.second < elem2.second;
+	};
+
+	std::set<std::pair<Edge*, float>, Comparator> setOfAngles(oriented_angles.begin(), oriented_angles.end(), compFunctor);
+
+	p->adjacentEdge.clear();
+	p->adjacentEdge.push_back(aref);
+
+	for (std::pair<Edge*, float> element : setOfAngles)
+	{
+		p->adjacentEdge.push_back(element.first);
+	}
+}
+
+bool edgeAlreadyExist(Edge* e1, std::vector<Edge*> vec)
+{
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		if (vec[i] == e1)
+			return true;
+	}
+
+	return false;
 }
 
 std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
@@ -332,106 +450,232 @@ std::vector<PointKob*> letsPertubate(std::vector<PointKob*> points)
 			}
 		}
 
-		PointKob perturbatePoint;
-		perturbatePoint.x = (*(*it) * (1 - alpha)).x + sumAdj.x * (alpha / (float)((*it)->adjacentEdge.size()));
-		perturbatePoint.y = (*(*it) * (1 - alpha)).y + sumAdj.y * (alpha / (float)((*it)->adjacentEdge.size()));
-		perturbatePoint.z = (*(*it) * (1 - alpha)).z + sumAdj.z * (alpha / (float)((*it)->adjacentEdge.size()));
+		PointKob* perturbatePoint = new PointKob();
+		perturbatePoint->x = (*(*it) * (1 - alpha)).x + sumAdj.x * (alpha / (float)((*it)->adjacentEdge.size()));
+		perturbatePoint->y = (*(*it) * (1 - alpha)).y + sumAdj.y * (alpha / (float)((*it)->adjacentEdge.size()));
+		perturbatePoint->z = (*(*it) * (1 - alpha)).z + sumAdj.z * (alpha / (float)((*it)->adjacentEdge.size()));
 
-		pertubatedPoints.push_back(&perturbatePoint);
+		for (int i = 0; i < (*it)->adjacentFace.size(); ++i)
+		{
+			perturbatePoint->adjacentFace.push_back((*it)->adjacentFace[i]);
+		}
+
+		for (int i = 0; i < (*it)->adjacentEdge.size(); ++i)
+		{
+			perturbatePoint->adjacentEdge.push_back((*it)->adjacentEdge[i]);
+		}
+
+		pertubatedPoints.push_back(perturbatePoint);
 	}
 
 	return pertubatedPoints;
 }
 
-void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*>& points)
+void letsGoKobbelt(std::vector<Face*> faces, std::vector<PointKob*>& points, std::vector<Edge*>& edges)
 {
 	// Calcul barycentre de chaque face
 	for (auto it = faces.begin(); it != faces.end(); ++it)
 	{
-		PointKob* p1 = (*it)->edges[0]->points[0];
-		PointKob* p2 = (*it)->edges[0]->points[1];
-		PointKob* p3 = (*it)->edges[1]->points[1];
+		PointKob* p = nullptr, *pk1 = nullptr, *pk2 = nullptr;
 
-		PointKob barycentre;
-		
-		barycentre.x = ((p1->x + p2->x) + p3->x) / 3;
-		barycentre.y = ((p1->y + p2->y) + p3->y) / 3;
-		barycentre.z = ((p1->z + p2->z) + p3->z) / 3;
+		Edge* e1 = (*it)->edges[0];
+		Edge* e2 = (*it)->edges[1];
 
-		(*it)->barycentre = &barycentre;
-	}
-
-	//std::vector<Edge*> newEdges;
-	//std::vector<Face*> newFaces = faces;
-
-	// Relier chaque barycentre aux points qui composent sa face
-	//for (auto it = faces.begin(); it != faces.end(); ++it)
-	//{
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0]->points[0]));
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[0]->points[1]));
-	//	newEdges.push_back(new Edge((*it)->barycentre, (*it)->edges[1]->points[1]));
-	//}
-
-	// Flipping
-	std::vector<PointKob*> perturbatedPoints = letsPertubate(points);
-
-	for (int i = 0; i < faces.size(); ++i)
-	{
-		if (faces[i]->barycentre == NULL)
+		if (e1->points[0] == e2->points[0])
 		{
-			break;
+			p = e1->points[0];
+			pk1 = e1->points[1];
+			pk2 = e2->points[1];
+		}
+		else if (e1->points[0] == e2->points[1])
+		{
+			p = e1->points[0];
+			pk1 = e1->points[1];
+			pk2 = e2->points[0];
+		}
+		else if (e1->points[1] == e2->points[0])
+		{
+			p = e1->points[1];
+			pk1 = e1->points[0];
+			pk2 = e2->points[1];
+		}
+		else if (e1->points[1] == e2->points[1])
+		{
+			p = e1->points[1];
+			pk1 = e1->points[0];
+			pk2 = e2->points[0];
 		}
 
-		for (int j = 0; j < faces[i]->edges.size(); ++j)
+		PointKob* barycentre = new PointKob();
+
+		barycentre->x = ((p->x + pk1->x) + pk2->x) / 3;
+		barycentre->y = ((p->y + pk1->y) + pk2->y) / 3;
+		barycentre->z = ((p->z + pk1->z) + pk2->z) / 3;
+
+		(*it)->barycentre = barycentre;
+	}
+
+	// Flipping
+	perturbatedPoints = letsPertubate(points);
+
+	std::vector<PointKob*> newPoints;
+	std::vector<Face*> newFaces;
+
+	for (int i = 0; i < perturbatedPoints.size(); ++i)
+	{
+		for (int j = 0; j < perturbatedPoints[i]->adjacentEdge.size(); j++)
 		{
-			if (faces[i]->edges[j]->adjacentFace.size() > 1)
+			if (perturbatedPoints[i]->adjacentEdge[j]->adjacentFace.size() == 2)
 			{
-				if (faces[i]->edges[j]->adjacentFace[0] != faces[i])
+				perturbatedPoints[i]->adjacentEdge.erase(perturbatedPoints[i]->adjacentEdge.begin() + j);
+				j--;
+			}
+			else
+			{
+				bool found = false;
+
+				for (int k = 0; k < newEdges.size(); ++k)
 				{
-					//newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre));
-
-
-					// TODO : Update all !!
-					// Update Edge
-					Edge* edge1 = new Edge(faces[i]->edges[j]->points[0], faces[i]->barycentre);
-					Edge* edge2 = new Edge(faces[i]->edges[j]->points[0], faces[i]->edges[j]->adjacentFace[0]->barycentre);
-					Edge* edge3 = new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre);
-
-					//edge1->adjacentFace.push
-
-
-					// Update Face
-					Face* newFace1 = new Face(edge1, edge2, edge3);
-
-					Face* newFace2 = new Face(new Edge(faces[i]->edges[j]->points[1], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[1], faces[i]->edges[j]->adjacentFace[0]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[0]->barycentre));
-
-					faces.push_back(newFace1);
-					faces.push_back(newFace2);
+					if (perturbatedPoints[i]->adjacentEdge[j] == newEdges[k])
+					{
+						found = true;
+						break;
+					}
 				}
-				else
-				{
-					//newEdges.push_back(new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
 
-					// Update
-					Face* newFace1 = new Face(new Edge(faces[i]->edges[j]->points[0], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[0], faces[i]->edges[j]->adjacentFace[1]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
-
-					Face* newFace2 = new Face(new Edge(faces[i]->edges[j]->points[1], faces[i]->barycentre),
-						new Edge(faces[i]->edges[j]->points[1], faces[i]->edges[j]->adjacentFace[1]->barycentre),
-						new Edge(faces[i]->barycentre, faces[i]->edges[j]->adjacentFace[1]->barycentre));
-
-					faces.push_back(newFace1);
-					faces.push_back(newFace2);
-				}
+				if (!found)
+					newEdges.push_back(perturbatedPoints[i]->adjacentEdge[j]);
 			}
 		}
 
-		faces.erase(faces.begin() + i);
+		for (int j = 0; j < perturbatedPoints[i]->adjacentFace.size(); j++)
+		{
+			Edge* baryEdge = new Edge(perturbatedPoints[i], perturbatedPoints[i]->adjacentFace[j]->barycentre);
+			perturbatedPoints[i]->adjacentEdge.push_back(baryEdge);
+			perturbatedPoints[i]->adjacentFace[j]->barycentre->adjacentEdge.push_back(baryEdge);
+			newEdges.push_back(baryEdge);
+		}
+
+		perturbatedPoints[i]->adjacentFace.clear();
 	}
 
+	for (int i = 0; i < edges.size(); ++i)
+	{
+		if (edges[i]->adjacentFace.size() == 2)
+		{
+			Edge* newEdge = new Edge(edges[i]->adjacentFace[0]->barycentre, edges[i]->adjacentFace[1]->barycentre);
+			edges[i]->adjacentFace[0]->barycentre->adjacentEdge.push_back(newEdge);
+			edges[i]->adjacentFace[1]->barycentre->adjacentEdge.push_back(newEdge);
+
+			newEdges.push_back(newEdge);
+		}
+	}
+
+	for (int i = 0; i < faces.size(); ++i)
+	{
+		perturbatedPoints.push_back(faces[i]->barycentre);
+	}
+
+	for (int i = 0; i < perturbatedPoints.size(); ++i)
+	{
+		findOrientedAdjacentEdges(perturbatedPoints[i]);
+	}
+
+	std::vector<Edge*> borderEdge;
+
+	for (int i = 0; i < points.size(); ++i)
+	{
+		for (int j = 0; j < perturbatedPoints[i]->adjacentEdge.size(); ++j)
+		{
+			Edge* e1 = nullptr, *e2 = nullptr;
+
+			if (j == perturbatedPoints[i]->adjacentEdge.size() - 1)
+			{
+				e1 = perturbatedPoints[i]->adjacentEdge[j];
+				e2 = perturbatedPoints[i]->adjacentEdge[0];
+			}
+			else
+			{
+
+				e1 = perturbatedPoints[i]->adjacentEdge[j];
+				e2 = perturbatedPoints[i]->adjacentEdge[j + 1];
+
+				bool found = false;
+				for (int k = 0; k < borderEdge.size(); ++k)
+				{
+					if (e1 == borderEdge[k])
+						found = true;
+				}
+
+				if (found)
+					continue;
+
+				found = false;
+				for (int k = 0; k < borderEdge.size(); ++k)
+				{
+					if (e2 == borderEdge[k])
+						found = true;
+				}
+
+				if (found)
+					continue;
+
+				if (edgeAlreadyExist(e1, edges))
+				{
+					borderEdge.push_back(e1);
+					e1->adjacentFace.clear();
+				}
+				else if (edgeAlreadyExist(e2, edges))
+				{
+					borderEdge.push_back(e2);
+					e2->adjacentFace.clear();
+				}
+
+				Edge* e3 = foundEdge(e1, e2);
+
+				Face* newFace = new Face(e1, e2, e3);
+
+				newFaces.push_back(newFace);
+				e1->adjacentFace.push_back(newFace);
+				e2->adjacentFace.push_back(newFace);
+				e3->adjacentFace.push_back(newFace);
+
+				PointKob* p = nullptr, *pk1 = nullptr, *pk2 = nullptr;
+
+				if (e1->points[0] == e2->points[0])
+				{
+					p = e1->points[0];
+					pk1 = e1->points[1];
+					pk2 = e2->points[1];
+				}
+				else if (e1->points[0] == e2->points[1])
+				{
+					p = e1->points[0];
+					pk1 = e1->points[1];
+					pk2 = e2->points[0];
+				}
+				else if (e1->points[1] == e2->points[0])
+				{
+					p = e1->points[1];
+					pk1 = e1->points[0];
+					pk2 = e2->points[1];
+				}
+				else if (e1->points[1] == e2->points[1])
+				{
+					p = e1->points[1];
+					pk1 = e1->points[0];
+					pk2 = e2->points[0];
+				}
+
+				p->adjacentFace.push_back(newFace);
+				pk1->adjacentFace.push_back(newFace);
+				pk2->adjacentFace.push_back(newFace);
+			}
+		}
+	}
+
+	faces = newFaces;
+	edges = newEdges;
 	points = perturbatedPoints;
 }
 
@@ -441,7 +685,7 @@ std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
 	for (unsigned i = 0; i < 4; ++i)
 	{
 		std::vector<Point> tmp;
-		for (unsigned j = i * controlPoints.size() / 4; j <= (i+1) * controlPoints.size() / 4 ; ++j)
+		for (unsigned j = i * controlPoints.size() / 4; j <= (i + 1) * controlPoints.size() / 4; ++j)
 		{
 			if (j == controlPoints.size())
 			{
@@ -454,7 +698,7 @@ std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
 
 		}
 
-		Curve tmpCurve(tmp,false);
+		Curve tmpCurve(tmp, false);
 
 
 		tmpCurve.SubdiviseCurve();
@@ -466,7 +710,7 @@ std::vector<Curve> chaikinOnControlPoints(std::vector<Point> controlPoints)
 }
 
 
-void structToTabColor(std::vector<Point> newPoints, std::vector<Colore> c,float * tabP)
+void structToTabColor(std::vector<Point> newPoints, std::vector<Colore> c, float * tabP)
 {
 	int j = 0;
 	for (int i = 0; i < newPoints.size() * 9; i += 9)
@@ -480,13 +724,13 @@ void structToTabColor(std::vector<Point> newPoints, std::vector<Colore> c,float 
 		//tabP[i + 4] = newPoints[j].n2;
 		tabP[i + 5] = -newPoints[j].n3;
 
-		
 
-		
-			/*tabP[i + 6] = RandomFloat(0, 1);
-			tabP[i + 7] = RandomFloat(0, 1);
-			tabP[i + 8] = RandomFloat(0, 1);*/
-		
+
+
+		/*tabP[i + 6] = RandomFloat(0, 1);
+		tabP[i + 7] = RandomFloat(0, 1);
+		tabP[i + 8] = RandomFloat(0, 1);*/
+
 		tabP[i + 6] = newPoints[j].c1;
 		tabP[i + 7] = newPoints[j].c2;
 		tabP[i + 8] = newPoints[j].c3;
@@ -496,9 +740,9 @@ void structToTabColor(std::vector<Point> newPoints, std::vector<Colore> c,float 
 
 }
 
-void structToTabTmp(std::vector<Point> newPoints, std::vector<Colore> c,float * tabP)
+void structToTabTmp(std::vector<Point> newPoints, std::vector<Colore> c, float * tabP)
 {
-	
+
 	int j = 0;
 	for (int i = 0; i < newPoints.size() * 3; i += 3)
 	{
@@ -515,10 +759,10 @@ void MenuFunction(int i)
 	case 0: StartNewPatch();
 		Initialize1(); break;
 	case 1: CancelPatch(); break;
-	case 2: 
+	case 2:
 		ConfirmPatch();
 		Initialize2();
-	break;
+		break;
 	case 30: RotatePatch(0); break;
 	case 31: RotatePatch(1); break;
 	case 32: RotatePatch(2); break;
@@ -617,7 +861,7 @@ bool Initialize1()
 	std::vector<Point> centerPoints3D = tmpPatch.controlPoints;
 
 	std::vector<Colore> tmpColore;
-	
+
 	pointsControles3D = transformPointsToCube(centerPoints3D);
 
 	for (int i = 0; i < pointsControles3D.size(); i++)
@@ -625,11 +869,11 @@ bool Initialize1()
 		tmpColore.push_back(Colore(red));
 	}
 
-	tabPoints = new float[pointsControles3D.size()*9];
+	tabPoints = new float[pointsControles3D.size() * 9];
 
-	structToTabColor(pointsControles3D,tmpColore,tabPoints);
+	structToTabColor(pointsControles3D, tmpColore, tabPoints);
 
-	indi = createInd(centerPoints3D.size()*24);
+	indi = createInd(centerPoints3D.size() * 24);
 
 
 	glewInit();
@@ -654,7 +898,7 @@ bool Initialize1()
 	//stbi_image_free(bitmapRGBA);
 
 	//glBindTexture(GL_TEXTURE_2D, 0);
-	
+
 	// Points controles VBO0
 	glGenVertexArrays(1, &VBO0); // Créer le VAO
 	glBindVertexArray(VBO0); // Lier le VAO pour l'utiliser
@@ -690,7 +934,7 @@ bool Initialize2()
 	//tmpPoints = new float[gridPoints3D.size() * 9];
 
 
-	
+
 	testCurve = chaikinOnControlPoints(tmpPatch.controlPoints);
 	gridPoints3D.clear();
 	std::vector<int> cptGridPoints;
@@ -699,14 +943,13 @@ bool Initialize2()
 
 	tmpCoons.GeneratePatch();
 
-	
 
 	/*for (int i = 0; i < tmpCoons.points.size(); ++i)
 	{
 		gridPoints3D.push_back(tmpCoons.points[i]);
 	}
 	*/
-	
+
 	initializeIcosaedre();
 	std::vector<PointKob*> pkP;
 	std::vector<Edge*> edgesP;
@@ -714,13 +957,15 @@ bool Initialize2()
 
 	initCleanStruct(gridPoints3D, sindex, pkP, edgesP, facesP);
 
+	//letsGoKobbelt(facesP, pkP, edgesP);
+
 	tmpPoints = new float[gridPoints3D.size() * 9];
 
 	glewInit();
 	g_BasicShader.LoadVertexShader("basic.vs");
 	g_BasicShader.LoadFragmentShader("basic.fs");
 	g_BasicShader.CreateProgram();
-	
+
 
 	//indTmp = createIndForGridPoints(cptGridPoints);
 	//indTmp = createInd(gridPoints3D.size());
@@ -728,20 +973,20 @@ bool Initialize2()
 
 	//indTmp = createIndFromVector(tmpCoons.triangles);
 
-	
+
 	//indVector = tmpCoons.triangles;
 
-	
-	
+
+
 	indTmp = createIndFromVector(sindex);
 	indVector = sindex;
 
 	for (int i = 0; i < (sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1) * 4; ++i)
 	{
-		std::cerr<<"TEST" << indTmp[i]<<std::endl;
+		std::cerr << "TEST" << indTmp[i] << std::endl;
 
 	}
-	structToTabColor(gridPoints3D, col,tmpPoints);
+	structToTabColor(gridPoints3D, col, tmpPoints);
 
 	// Points controles VBO0
 	glGenVertexArrays(1, &VBO0); // Créer le VAO
@@ -760,7 +1005,7 @@ bool Initialize2()
 	glBindVertexArray(VBO1); // Lier le VAO pour l'utiliser
 	glEnableVertexAttribArray(1);
 
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 	glBufferData(GL_ARRAY_BUFFER, gridPoints3D.size() * 9 * sizeof(float), tmpPoints, GL_STATIC_DRAW);
 
@@ -792,17 +1037,17 @@ void Terminate()
 
 void update()
 {
-	
-	
+
+
 	if (initialized1)
 	{
-		
-			pointsControles3D = transformPointsToCube(tmpPatch.controlPoints);
-			structToTabColor(pointsControles3D, col, tabPoints);
 
-			glBindBuffer(GL_ARRAY_BUFFER, VBO0);
-			glBufferSubData(GL_ARRAY_BUFFER,0, pointsControles3D.size() * 9 * sizeof(float), tabPoints);
-		
+		pointsControles3D = transformPointsToCube(tmpPatch.controlPoints);
+		structToTabColor(pointsControles3D, col, tabPoints);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO0);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, pointsControles3D.size() * 9 * sizeof(float), tabPoints);
+
 	}
 	if (initialized2)
 	{
@@ -822,7 +1067,7 @@ void update()
 		}
 		}*/
 
-		
+
 
 		if (keyMode == 0)
 		{
@@ -866,14 +1111,14 @@ void update()
 			}
 		}
 		//indTmp = createIndForGridPoints();
-		
+
 		delete(tmpPoints);
-		tmpPoints = new float[gridPoints3D.size()*9];
+		tmpPoints = new float[gridPoints3D.size() * 9];
 		indTmp = createIndFromVector(tmpCoons.triangles);
 		indVector = tmpCoons.triangles;
 		//indTmp = createInd(gridPoints3D.size());
 
-		structToTabColor(gridPoints3D, col,tmpPoints);
+		structToTabColor(gridPoints3D, col, tmpPoints);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, gridPoints3D.size() * 9 * sizeof(float), tmpPoints);
@@ -888,133 +1133,133 @@ void update()
 
 void animate()
 {
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		// afin d'obtenir le deltatime actuel
-		TimeSinceAppStartedInMS = glutGet(GLUT_ELAPSED_TIME);
-		TimeInSeconds = TimeSinceAppStartedInMS / 1000.0f;
-		DeltaTime = (TimeSinceAppStartedInMS - OldTime) / 1000.0f;
-		OldTime = TimeSinceAppStartedInMS;
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// afin d'obtenir le deltatime actuel
+	TimeSinceAppStartedInMS = glutGet(GLUT_ELAPSED_TIME);
+	TimeInSeconds = TimeSinceAppStartedInMS / 1000.0f;
+	DeltaTime = (TimeSinceAppStartedInMS - OldTime) / 1000.0f;
+	OldTime = TimeSinceAppStartedInMS;
 
-		glViewport(0, 0, width, height);
-		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
-		//glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_TRUE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
+	glViewport(0, 0, width, height);
+	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+	//glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
-		auto program = g_BasicShader.GetProgram();
-		glUseProgram(program);
+	auto program = g_BasicShader.GetProgram();
+	glUseProgram(program);
 
-		/*	uint32_t texUnit = 0;
-		glActiveTexture(GL_TEXTURE0 + texUnit);
-		glBindTexture(GL_TEXTURE_2D, TexObj);
-		auto texture_location = glGetUniformLocation(program, "u_Texture");
-		glUniform1i(texture_location, texUnit);
-		*/
-		// UNIFORMS
-		Esgi::Mat4 worldMatrix;
-		worldMatrix.MakeScale(1.0f, 1.0f, 1.0f);
+	/*	uint32_t texUnit = 0;
+	glActiveTexture(GL_TEXTURE0 + texUnit);
+	glBindTexture(GL_TEXTURE_2D, TexObj);
+	auto texture_location = glGetUniformLocation(program, "u_Texture");
+	glUniform1i(texture_location, texUnit);
+	*/
+	// UNIFORMS
+	Esgi::Mat4 worldMatrix;
+	worldMatrix.MakeScale(1.0f, 1.0f, 1.0f);
 
-		//  Camera Matrix
-		Esgi::Mat4 cameraMatrix;
-		switch (CamType)
-		{
-		case 0:	//FPS
-			cameraMatrix = FPSCamera(posX, posY, posZ, rotX, rotY);
-			break;
-		case 1:	//Orbit
-			cameraMatrix = OrbitCamera(posX, posY, posZ, distance, rotX, rotY);
-			break;
-		}
+	//  Camera Matrix
+	Esgi::Mat4 cameraMatrix;
+	switch (CamType)
+	{
+	case 0:	//FPS
+		cameraMatrix = FPSCamera(posX, posY, posZ, rotX, rotY);
+		break;
+	case 1:	//Orbit
+		cameraMatrix = OrbitCamera(posX, posY, posZ, distance, rotX, rotY);
+		break;
+	}
 
-		//
+	//
 
-		auto world_location = glGetUniformLocation(program, "u_WorldMatrix");
-		glUniformMatrix4fv(world_location, 1, GL_FALSE, worldMatrix.m);
+	auto world_location = glGetUniformLocation(program, "u_WorldMatrix");
+	glUniformMatrix4fv(world_location, 1, GL_FALSE, worldMatrix.m);
 
-		Esgi::Mat4 projectionMatrix;
-		float w = glutGet(GLUT_WINDOW_WIDTH), h = glutGet(GLUT_WINDOW_HEIGHT);
-		// ProjectionMatrix
-		float aspectRatio = w / h;			// facteur d'aspect
-		float fovy = 45.0f;					// degree d'ouverture
-		float nearZ = 0.1f;
-		float farZ = 10000.0f;
-		projectionMatrix.Perspective(fovy, aspectRatio, nearZ, farZ);
+	Esgi::Mat4 projectionMatrix;
+	float w = glutGet(GLUT_WINDOW_WIDTH), h = glutGet(GLUT_WINDOW_HEIGHT);
+	// ProjectionMatrix
+	float aspectRatio = w / h;			// facteur d'aspect
+	float fovy = 45.0f;					// degree d'ouverture
+	float nearZ = 0.1f;
+	float farZ = 10000.0f;
+	projectionMatrix.Perspective(fovy, aspectRatio, nearZ, farZ);
 
-		//projectionMatrix.MakeScale(1.0f / (0.5f*w), 1.0f / (0.5f*h), 1.0f);
+	//projectionMatrix.MakeScale(1.0f / (0.5f*w), 1.0f / (0.5f*h), 1.0f);
 
-		auto projection_location = glGetUniformLocation(program, "u_ProjectionMatrix");
-		glUniformMatrix4fv(projection_location, 1, GL_FALSE, projectionMatrix.m);
+	auto projection_location = glGetUniformLocation(program, "u_ProjectionMatrix");
+	glUniformMatrix4fv(projection_location, 1, GL_FALSE, projectionMatrix.m);
 
-		auto camera_location = glGetUniformLocation(program, "u_CameraMatrix");
-		glUniformMatrix4fv(camera_location, 1, GL_FALSE, cameraMatrix.m);
+	auto camera_location = glGetUniformLocation(program, "u_CameraMatrix");
+	glUniformMatrix4fv(camera_location, 1, GL_FALSE, cameraMatrix.m);
 
-		auto time_location = glGetUniformLocation(program, "u_Time");
-		glUniform1f(time_location, TimeInSeconds);
+	auto time_location = glGetUniformLocation(program, "u_Time");
+	glUniform1f(time_location, TimeInSeconds);
 
-		/*auto c_location = glGetUniformLocation(program, "color");
-		glUniform4fv(c_location, 1, colore);*/
+	/*auto c_location = glGetUniformLocation(program, "color");
+	glUniform4fv(c_location, 1, colore);*/
 
-		// ATTRIBUTES
-		auto normal_location = glGetAttribLocation(program, "a_Normal");
-		auto position_location = glGetAttribLocation(program, "a_Position");
-		auto color_location = glGetAttribLocation(program, "a_Color");
-		//auto texcoords_location = glGetAttribLocation(program, "a_TexCoords");
-		//glVertexAttrib3f(color_location, 0.0f, 1.0f, 0.0f);
+	// ATTRIBUTES
+	auto normal_location = glGetAttribLocation(program, "a_Normal");
+	auto position_location = glGetAttribLocation(program, "a_Position");
+	auto color_location = glGetAttribLocation(program, "a_Color");
+	//auto texcoords_location = glGetAttribLocation(program, "a_TexCoords");
+	//glVertexAttrib3f(color_location, 0.0f, 1.0f, 0.0f);
 
-		// Le fait de specifier la ligne suivante va modifier le fonctionnement interne de glVertexAttribPointer
-		// lorsque GL_ARRAY_BUFFER != 0 cela indique que les donnees sont stockees sur le GPU
-		glBindBuffer(GL_ARRAY_BUFFER, VBO0);
+	// Le fait de specifier la ligne suivante va modifier le fonctionnement interne de glVertexAttribPointer
+	// lorsque GL_ARRAY_BUFFER != 0 cela indique que les donnees sont stockees sur le GPU
+	glBindBuffer(GL_ARRAY_BUFFER, VBO0);
 
-		//glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 
-		glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
-		glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
-		glVertexAttribPointer(color_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
-		// on interprete les 3 valeurs inconnues comme RGB alors que ce sont les normales
-		//glVertexAttribPointer(texcoords_location, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
+	glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
+	glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
+	glVertexAttribPointer(color_location, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
+	// on interprete les 3 valeurs inconnues comme RGB alors que ce sont les normales
+	//glVertexAttribPointer(texcoords_location, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
 
-		//glEnableVertexAttribArray(texcoords_location);
-		glEnableVertexAttribArray(position_location);
-		glEnableVertexAttribArray(normal_location);
-		glEnableVertexAttribArray(color_location);
-		//glEnableVertexAttribArray(texcoords_location);
+	//glEnableVertexAttribArray(texcoords_location);
+	glEnableVertexAttribArray(position_location);
+	glEnableVertexAttribArray(normal_location);
+	glEnableVertexAttribArray(color_location);
+	//glEnableVertexAttribArray(texcoords_location);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-		glDrawElements(GL_QUADS, pointsControles3D.size(), GL_UNSIGNED_SHORT, nullptr);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glDrawElements(GL_QUADS, pointsControles3D.size(), GL_UNSIGNED_SHORT, nullptr);
 
-		//-----------
+	//-----------
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 
-		int sizeP = 9;
-		glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
-		glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
-		glVertexAttribPointer(color_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
-
-
-		glEnableVertexAttribArray(position_location);
-		glEnableVertexAttribArray(normal_location);
-		glEnableVertexAttribArray(color_location);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
-		if (initialized2)
-		{
-			glDrawElements(GL_TRIANGLES, indVector.size(), GL_UNSIGNED_SHORT, nullptr);
-		}
-		//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
-		//----------------
-		glDisableVertexAttribArray(position_location);
-		glDisableVertexAttribArray(normal_location);
-		glDisableVertexAttribArray(color_location);
-		glUseProgram(0);
+	int sizeP = 9;
+	glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
+	glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
+	glVertexAttribPointer(color_location, 3, GL_FLOAT, GL_FALSE, sizeP * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
 
 
-		//Repositionnement du curseur 
-		//glutWarpPointer(width*0.5f, height*0.5f);
-		glEnd();
+	glEnableVertexAttribArray(position_location);
+	glEnableVertexAttribArray(normal_location);
+	glEnableVertexAttribArray(color_location);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO1);
+	if (initialized2)
+	{
+		glDrawElements(GL_TRIANGLES, indVector.size(), GL_UNSIGNED_SHORT, nullptr);
+	}
+	//(sqrt(gridPoints3D.size()) - 1)*(sqrt(gridPoints3D.size()) - 1)*4
+	//----------------
+	glDisableVertexAttribArray(position_location);
+	glDisableVertexAttribArray(normal_location);
+	glDisableVertexAttribArray(color_location);
+	glUseProgram(0);
 
 
-		glutSwapBuffers();
+	//Repositionnement du curseur 
+	//glutWarpPointer(width*0.5f, height*0.5f);
+	glEnd();
+
+
+	glutSwapBuffers();
 
 }
 
@@ -1049,7 +1294,7 @@ int main(int argc, const char* argv[])
 #else
 	glewInit();
 #endif
-	
+
 	glutIdleFunc(update);
 	glutDisplayFunc(animate);
 
@@ -1068,7 +1313,7 @@ int main(int argc, const char* argv[])
 GLushort* createInd(int n)
 {
 	GLushort* tmp = new GLushort[n];
-	for (int i = 0; i < n ; i++)
+	for (int i = 0; i < n; i++)
 	{
 		tmp[i] = i;
 	}
@@ -1111,21 +1356,21 @@ GLushort* createIndForGridPoints()
 	//int tmps = precision*precision * 4;
 	int prec = (sqrt(gridPoints3D.size()) - 1);
 
-		for (int i = 0; i < prec; i++)
+	for (int i = 0; i < prec; i++)
+	{
+		int k = 0;
+		for (int j = 0; j < prec; j++)
 		{
-			int k = 0;
-			for (int j = 0; j < prec; j++)
-			{
 
-				tmp[cpt] =  i*(prec + 1) + j;
-				tmp[cpt + 1] =  i*(prec + 1) + j + 1;
-				tmp[cpt + 2] =  (i + 1)*(prec + 1) + j + 1;
-				tmp[cpt + 3] =  (i + 1)*(prec + 1) + j;
-				cpt += 4;
-			}
-
+			tmp[cpt] = i*(prec + 1) + j;
+			tmp[cpt + 1] = i*(prec + 1) + j + 1;
+			tmp[cpt + 2] = (i + 1)*(prec + 1) + j + 1;
+			tmp[cpt + 3] = (i + 1)*(prec + 1) + j;
+			cpt += 4;
 		}
-	
+
+	}
+
 	return tmp;
 }
 GLushort* createIndFromVector(std::vector<int> indexesVector)
