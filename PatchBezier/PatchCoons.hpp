@@ -54,21 +54,18 @@ struct PatchCoons
 	std::vector<int> generateTriangles()
 	{
 		triangles.clear();
-		int height = curves[1]->currPoints.size();
-		int width = curves[0]->currPoints.size();
-		for (int i = 0; i < width*(height - 1); i++)
+		int height = curves[1]->newPoints.size();
+		int width = curves[0]->newPoints.size();
+		for (int i = 0; i < (width-1)*(height - 1); i++)
 		{
+
 			triangles.push_back(i);
-			if (i % 2 == 0)
-			{
-				triangles.push_back(i+width);
-				triangles.push_back(i+1);
-			}
-			else
-			{
-				triangles.push_back(i + width-1);
-				triangles.push_back(i + width);
-			}
+			triangles.push_back(i + width);
+			triangles.push_back(i + width + 1);
+
+			triangles.push_back(i);
+			triangles.push_back(i + width + 1);
+			triangles.push_back(i + 1);
 		}
 		return triangles;
 	}
