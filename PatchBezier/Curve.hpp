@@ -12,6 +12,11 @@ struct Curve
 	bool closed;
 	std::vector<Point> initPoints, currPoints, newPoints;
 
+	Curve()
+	{
+
+	}
+
 	Curve(std::vector<Point> p, bool c)
 	{
 		n = p.size();

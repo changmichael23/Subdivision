@@ -15,6 +15,11 @@ float SIN(float angle)
 	return sin(angle * 2 * 0.00872664625);
 }
 
+float ACOS(float x)
+{
+	return acos(x) * 2 * 0.00872664625;
+}
+
 struct PatchCoons
 {
 	int n, m;
@@ -117,6 +122,16 @@ struct PatchCoons
 			{
 				p.z += step;
 			}
+		}
+	}
+
+	void Translate(Point step)
+	{
+		for (Point &p : points)
+		{
+			p.x += step.x;
+			p.y += step.y;
+			p.z += step.z;
 		}
 	}
 
