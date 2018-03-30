@@ -26,6 +26,8 @@ struct PatchCoons
 
 	Curve* curves[4];
 	std::vector<Point> points;
+
+	std::vector<int> triangles;
 	std::vector<Point> uPoints, vPoints, bPoints;
 	
 	PatchCoons()
@@ -47,6 +49,28 @@ struct PatchCoons
 		curves[3] = _d;
 
 		points.reserve(pow(precision + 1, 2));
+	}
+
+	std::vector<int> generateTriangles()
+	{
+		triangles.clear();
+		int height = curves[1]->currPoints.size();
+		int width = curves[0]->currPoints.size();
+		for (int i = 0; i < width*(height - 1); i++)
+		{
+			triangles.push_back(i);
+			if (i % 2 == 0)
+			{
+				triangles.push_back(i+width);
+				triangles.push_back(i+1);
+			}
+			else
+			{
+				triangles.push_back(i + width-1);
+				triangles.push_back(i + width);
+			}
+		}
+		return triangles;
 	}
 
 	void ChangeColor(float col1, float col2, float col3)
@@ -205,6 +229,8 @@ struct PatchCoons
 
 		return Suv;
 	}
+
+
 
 	float BernsteinPoly(int i, float t, int dim)
 	{
