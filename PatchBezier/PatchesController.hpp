@@ -41,7 +41,7 @@ void CancelPatch()
 void ConfirmPatch()
 {
 	gs = idle;
-	patches.push_back(tmpPatch);
+	//patches.push_back(tmpPatch);
 	//patches.back().GenerateCurve();
 	++nbPatches;
 }
