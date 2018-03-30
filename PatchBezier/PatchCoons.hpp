@@ -56,8 +56,13 @@ struct PatchCoons
 		triangles.clear();
 		int height = curves[1]->newPoints.size();
 		int width = curves[0]->newPoints.size();
-		for (int i = 0; i < (width-1)*(height - 1); i++)
+		for (int i = 0; i < (width)*(height-1); i++)
 		{
+			if (i%width == width-1)
+			{
+
+				continue;
+			}
 
 			triangles.push_back(i);
 			triangles.push_back(i + width);
@@ -176,6 +181,8 @@ struct PatchCoons
 				points.push_back(Point(x, y, z));
 			}
 		}
+
+		generateTriangles();
 	}
 
 	std::vector<Point> GenerateRuledSurface(Curve* c1, Curve* c2, int v)
